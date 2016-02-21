@@ -45,8 +45,15 @@ ARTICLE_SAVE_AS = '{category}/{slug}/index.html'
 PAGE_URL = '{slug}/'
 PAGE_SAVE_AS = '{slug}/index.html'
 
-STATIC_PATHS = ['images']
+STATIC_PATHS = [
+    'images',
+    'static']
+EXTRA_PATH_METADATA = {
+  'static/CNAME': {'path': 'CNAME'}
+}
+
 THEME = 'themes/Flex'
 SITELOGO = '/images/site_logo.png'
 
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
+
