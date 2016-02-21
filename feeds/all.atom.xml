@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>中国SaltStack用户组</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2014-12-17T00:00:00+08:00</updated><entry><title>基于Salt管理iptables防火墙规则</title><link href="/kb/managing-firewall-with-salt/" rel="alternate"></link><updated>2014-12-17T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:,2014-12-17:kb/managing-firewall-with-salt/</id><summary type="html">&lt;ul class="simple"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>中国SaltStack用户组</title><link href="http://www.saltstack.cn/" rel="alternate"></link><link href="http://www.saltstack.cn/feeds/all.atom.xml" rel="self"></link><id>http://www.saltstack.cn/</id><updated>2014-12-17T00:00:00+08:00</updated><entry><title>基于Salt管理iptables防火墙规则</title><link href="http://www.saltstack.cn/kb/managing-firewall-with-salt/" rel="alternate"></link><updated>2014-12-17T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:www.saltstack.cn,2014-12-17:kb/managing-firewall-with-salt/</id><summary type="html">&lt;ul class="simple"&gt;
 &lt;li&gt;原文出处: &lt;a class="reference external" href="http://pengyao.org/managing-firewall-with-salt.html"&gt;http://pengyao.org/managing-firewall-with-salt.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a class="reference external" href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -262,7 +262,7 @@ minion-01.example.com:
 &lt;p&gt;达到预期&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt Master外部Job Cache配置</title><link href="/kb/saltstack-master-external-job-cache-01/" rel="alternate"></link><updated>2014-11-24T00:00:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-11-24:kb/saltstack-master-external-job-cache-01/</id><summary type="html">&lt;ul&gt;
+</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt Master外部Job Cache配置</title><link href="http://www.saltstack.cn/kb/saltstack-master-external-job-cache-01/" rel="alternate"></link><updated>2014-11-24T00:00:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-11-24:kb/saltstack-master-external-job-cache-01/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://pengyao.org/saltstack-master-external-job-cache.html"&gt;http://pengyao.org/saltstack-master-external-job-cache.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -394,7 +394,7 @@ alter_time: 2014-11-20 06:02:02
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Job执行结果已经按照之前的配置存储到了MySQL中, 达到预期效果&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt中ZeroMQ那点事</title><link href="/saltstack/salt-zeromq-01/" rel="alternate"></link><updated>2014-09-06T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:,2014-09-06:saltstack/salt-zeromq-01/</id><summary type="html">&lt;ul class="simple"&gt;
+&lt;p&gt;Job执行结果已经按照之前的配置存储到了MySQL中, 达到预期效果&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt中ZeroMQ那点事</title><link href="http://www.saltstack.cn/saltstack/salt-zeromq-01/" rel="alternate"></link><updated>2014-09-06T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:www.saltstack.cn,2014-09-06:saltstack/salt-zeromq-01/</id><summary type="html">&lt;ul class="simple"&gt;
 &lt;li&gt;原文出处: &lt;a class="reference external" href="http://pengyao.org/salt-zeromq-01.html"&gt;http://pengyao.org/salt-zeromq-01.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a class="reference external" href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -655,7 +655,7 @@ alter_time: 2014-11-20 06:02:02
 &lt;p&gt;Salt利用ZeroMQ灵活高效的patterns, 使Salt网络拓扑变得非常灵活高效. 利用PUB/SUB, 实现了高效的远程执行指令下发机制; 利用ROUTER/REQ, 实现认证及异步的远程执行结果返回; 利用DEALER/REP, 实现多进程任务处理机制; 利用PULL/PUB, 实现Event BUS, 使其他或第三方应用可以快速的使用PUB/SUB接收到Event BUS上的消息.&lt;/p&gt;
 &lt;p&gt;I love Salt, I love ZeroMQ!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt新通信架构—RAET</title><link href="/kb/salt-raet-01/" rel="alternate"></link><updated>2014-07-10T14:10:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-07-10:kb/salt-raet-01/</id><summary type="html">&lt;ul&gt;
+</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt新通信架构—RAET</title><link href="http://www.saltstack.cn/kb/salt-raet-01/" rel="alternate"></link><updated>2014-07-10T14:10:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-07-10:kb/salt-raet-01/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处:
     &lt;a href="http://devopstarter.info/-fan-yi-salt-xin-tong-xin-jia-gou-salt-raet/"&gt;http://devopstarter.info/-fan-yi-salt-xin-tong-xin-jia-gou-salt-raet/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;E文原文: &lt;a href="https://github.com/saltstack/raet"&gt;https://github.com/saltstack/raet&lt;/a&gt;&lt;/li&gt;
@@ -991,7 +991,7 @@ UDP消息同等尺寸大小（大概16Mb）。&lt;/p&gt;
 &lt;p&gt;1) JSON 头部: “RAET\njson\n\n”
 紧接着一个统一JSON格式的消息正文的数据字典;&lt;/p&gt;
 &lt;p&gt;2) msgpack 头部:
-“RAET\npack\n\n”紧接着一个统一的MSGPACK格式的消息正文的数据字典。&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt中Pillar那点事</title><link href="/kb/salt-pillar-01/" rel="alternate"></link><updated>2014-06-08T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:,2014-06-08:kb/salt-pillar-01/</id><summary type="html">&lt;ul class="simple"&gt;
+“RAET\npack\n\n”紧接着一个统一的MSGPACK格式的消息正文的数据字典。&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt中Pillar那点事</title><link href="http://www.saltstack.cn/kb/salt-pillar-01/" rel="alternate"></link><updated>2014-06-08T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:www.saltstack.cn,2014-06-08:kb/salt-pillar-01/</id><summary type="html">&lt;ul class="simple"&gt;
 &lt;li&gt;原文出处: &lt;a class="reference external" href="http://pengyao.org/salt-pillar-01.html"&gt;http://pengyao.org/salt-pillar-01.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a class="reference external" href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -1204,7 +1204,7 @@ UDP消息同等尺寸大小（大概16Mb）。&lt;/p&gt;
 &lt;p&gt;Salt支持从第三方系统中获取Pillar信息,使Salt易于与现有的CMDB系统进行数据整合. 对应的配置是master配置文件中的ext_pillar选项. 官方当前已经提供了 &lt;a class="reference external" href="http://docs.saltstack.com/en/latest/ref/pillar/all/"&gt;若干驱动&lt;/a&gt; .&lt;/p&gt;
 &lt;p&gt;如果已经提供的驱动并不满足需求, 自定义ext_pillar驱动也非常简单. 只需要驱动文件放到master端salt代码中pillar目录下即可, 驱动为python代码, 其中包含ext_pillar函数, 且该函数第一个参数是minion_id, 第二个参数为pillar, 其返回值是一个标准的 &lt;a class="reference external" href="https://docs.python.org/2/tutorial/datastructures.html#dictionaries"&gt;Python字典&lt;/a&gt; 即可. 可以参照 &lt;a class="reference external" href="https://github.com/saltstack/salt/blob/v2014.1.4/salt/pillar/cobbler.py"&gt;cobbler的ext_pillar&lt;/a&gt; 进行编写.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>SaltStack Event系统监听events测试</title><link href="/kb/saltstack-event-system-listen-events/" rel="alternate"></link><updated>2014-04-24T09:03:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-04-24:kb/saltstack-event-system-listen-events/</id><summary type="html">&lt;ul&gt;
+</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>SaltStack Event系统监听events测试</title><link href="http://www.saltstack.cn/kb/saltstack-event-system-listen-events/" rel="alternate"></link><updated>2014-04-24T09:03:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-04-24:kb/saltstack-event-system-listen-events/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://pengyao.org/saltstack_event_system_listen_events.html"&gt;http://pengyao.org/saltstack_event_system_listen_events.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -1320,7 +1320,7 @@ did not return&amp;quot;.
 此为正常现象, 无需处理(当然, 有洁癖的同学可能会不爽).&lt;/p&gt;
 &lt;h2&gt;总结&lt;/h2&gt;
 &lt;p&gt;Salt提供了强大的Event系统, 第三方程序可以轻松插入Event系统,
-捕获当前Salt的运行状态, 易于扩展Salt功能.&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>基于Salt Event系统构建Master端returner</title><link href="/kb/saltstack_master_retuner_over_event_system/" rel="alternate"></link><updated>2014-04-18T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:,2014-04-18:kb/saltstack_master_retuner_over_event_system/</id><summary type="html">&lt;ul class="simple"&gt;
+捕获当前Salt的运行状态, 易于扩展Salt功能.&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>基于Salt Event系统构建Master端returner</title><link href="http://www.saltstack.cn/kb/saltstack_master_retuner_over_event_system/" rel="alternate"></link><updated>2014-04-18T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:www.saltstack.cn,2014-04-18:kb/saltstack_master_retuner_over_event_system/</id><summary type="html">&lt;ul class="simple"&gt;
 &lt;li&gt;原文出处: &lt;a class="reference external" href="http://pengyao.org/saltstack_master_retuner_over_event_system.html"&gt;http://pengyao.org/saltstack_master_retuner_over_event_system.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a class="reference external" href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -1468,7 +1468,7 @@ CREATE TABLE `salt_returns` (
 &lt;p&gt;入库成功&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt Runners manage学习</title><link href="/kb/salt-runners-manage-01/" rel="alternate"></link><updated>2014-03-16T19:26:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-16:kb/salt-runners-manage-01/</id><summary type="html">&lt;ul&gt;
+</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt Runners manage学习</title><link href="http://www.saltstack.cn/kb/salt-runners-manage-01/" rel="alternate"></link><updated>2014-03-16T19:26:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-16:kb/salt-runners-manage-01/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://pengyao.org/salt_runners_manage_01.html"&gt;http://pengyao.org/salt_runners_manage_01.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;作者: pengyao&lt;/p&gt;
@@ -1605,7 +1605,7 @@ return ret
 
 &lt;ul&gt;
 &lt;li&gt;总结: 利用本方法，哪些minion需要升级立马得知，谁用谁知道啊!&lt;/li&gt;
-&lt;/ul&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>在SaltStack中如何使用require及watch语法</title><link href="/kb/howto-use-require-and-watch-statements/" rel="alternate"></link><updated>2014-03-16T18:40:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-16:kb/howto-use-require-and-watch-statements/</id><summary type="html">&lt;ul&gt;
+&lt;/ul&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>在SaltStack中如何使用require及watch语法</title><link href="http://www.saltstack.cn/kb/howto-use-require-and-watch-statements/" rel="alternate"></link><updated>2014-03-16T18:40:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-16:kb/howto-use-require-and-watch-statements/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://pengyao.org/howto_to_use_require_and_watch_statements.html"&gt;http://pengyao.org/howto_to_use_require_and_watch_statements.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;英文原文出处: &lt;a href="http://intothesaltmine.org/how_to_use_require_and_watch_statements.html"&gt;http://intothesaltmine.org/how_to_use_require_and_watch_statements.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;译者: &lt;a href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
@@ -1669,7 +1669,7 @@ return ret
 
 
 &lt;h2&gt;总结(Conclusion)&lt;/h2&gt;
-&lt;p&gt;在State规则中，你可以通过强大的 &lt;code&gt;require&lt;/code&gt; 、 &lt;code&gt;require_in&lt;/code&gt; 、 &lt;code&gt;watch&lt;/code&gt; 及 &lt;code&gt;watch_in&lt;/code&gt; 指定state间的依赖关系. 无论是一个服务应该watch一个文件的变化，还是一个服务运行前必须确保软件包已安装都可以通过它们来指定state的逻辑执行顺序.&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>使用Salt管理用户</title><link href="/kb/managing-user-with-salt/" rel="alternate"></link><updated>2014-03-16T18:35:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-16:kb/managing-user-with-salt/</id><summary type="html">&lt;ul&gt;
+&lt;p&gt;在State规则中，你可以通过强大的 &lt;code&gt;require&lt;/code&gt; 、 &lt;code&gt;require_in&lt;/code&gt; 、 &lt;code&gt;watch&lt;/code&gt; 及 &lt;code&gt;watch_in&lt;/code&gt; 指定state间的依赖关系. 无论是一个服务应该watch一个文件的变化，还是一个服务运行前必须确保软件包已安装都可以通过它们来指定state的逻辑执行顺序.&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>使用Salt管理用户</title><link href="http://www.saltstack.cn/kb/managing-user-with-salt/" rel="alternate"></link><updated>2014-03-16T18:35:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-16:kb/managing-user-with-salt/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://pengyao.org/managing_user_with_salt.html"&gt;http://pengyao.org/managing_user_with_salt.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;英文原文出处: &lt;a href="http://intothesaltmine.org/blog/html/2012/12/11/managing_users_with_salt.html"&gt;http://intothesaltmine.org/blog/html/2012/12/11/managing_users_with_salt.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;译者: &lt;a href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
@@ -1722,7 +1722,7 @@ return ret
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;(尽管本例中指定的密码并不是我真实的密码，不过例子中出现的密码hash串并不是一个好主意)&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt-ssh安装配置</title><link href="/kb/salt-ssh-install-and-config/" rel="alternate"></link><updated>2014-03-16T18:30:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-16:kb/salt-ssh-install-and-config/</id><summary type="html">&lt;ul&gt;
+&lt;p&gt;(尽管本例中指定的密码并不是我真实的密码，不过例子中出现的密码hash串并不是一个好主意)&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt-ssh安装配置</title><link href="http://www.saltstack.cn/kb/salt-ssh-install-and-config/" rel="alternate"></link><updated>2014-03-16T18:30:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-16:kb/salt-ssh-install-and-config/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://clavinli.github.io/2013/10/22/saltstack-salt-ssh/"&gt;http://clavinli.github.io/2013/10/22/saltstack-salt-ssh/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: clavinli&lt;/li&gt;
 &lt;/ul&gt;
@@ -1899,7 +1899,7 @@ sshpass-1.05-1.el6.x86_64
 
 &lt;p&gt;salt-ssh
 使用的范围还是比较广的，适合用于那些已经部署了其他自动化运维工具的机器，如
-puppet、chef，不过我主要用于初始化 minion 环境，主要还是用 salt 比较多&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt相关使用</title><link href="/kb/salt-use-01/" rel="alternate"></link><updated>2014-03-16T18:30:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-16:kb/salt-use-01/</id><summary type="html">&lt;ul&gt;
+puppet、chef，不过我主要用于初始化 minion 环境，主要还是用 salt 比较多&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt相关使用</title><link href="http://www.saltstack.cn/kb/salt-use-01/" rel="alternate"></link><updated>2014-03-16T18:30:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-16:kb/salt-use-01/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://blog.halfss.com/blog/2013/06/15/saltxiang-guan-shi-yong/"&gt;http://blog.halfss.com/blog/2013/06/15/saltxiang-guan-shi-yong/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: halfss&lt;/li&gt;
 &lt;/ul&gt;
@@ -2147,7 +2147,7 @@ minion1:
 
 &lt;p&gt;将自定义的modules文件放在配置文件中定义的file_roots(默认为/srv/salt)下的 _modules目录下,会在执行highstate的时候自动同步,或者按照如下方式,手工推送&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;salt &amp;#39;*&amp;#39; saltutil.sync_modules 或者　salt &amp;#39;*&amp;#39; saltutil.sync_all
-&lt;/pre&gt;&lt;/div&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt States概览</title><link href="/kb/starting-states/" rel="alternate"></link><updated>2014-03-16T18:18:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-16:kb/starting-states/</id><summary type="html">&lt;ul&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt States概览</title><link href="http://www.saltstack.cn/kb/starting-states/" rel="alternate"></link><updated>2014-03-16T18:18:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-16:kb/starting-states/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://www.ituring.com.cn/article/42238"&gt;http://www.ituring.com.cn/article/42238&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: yinchuan&lt;/li&gt;
 &lt;/ul&gt;
@@ -2471,7 +2471,7 @@ django:
 &lt;h2&gt;运行和调试Salt States&lt;/h2&gt;
 &lt;p&gt;写好的SLS如何才能应用到minion呢？在SaltStack中，远程执行是一切的基础。执行命令@salt ‘*’ state.highstate@会让所有的minion到master上来取走自己的SLS定义，然后在本地调用对应的state module（user，pkg，service等）来达到SLS描述的状态。如果这条命令只返回minion的主机名加一个’:’，多半是哪一个SLS文件有错。如果minion是以服务进程启动，执行命令@salt-call state.highstate -l debug@可以看到错误信息，便于调试。minion还可以直接在前台以debug模式运行：@salt-minion -l debug@。&lt;/p&gt;
 &lt;h2&gt;接下来是什么？&lt;/h2&gt;
-&lt;p&gt;接下来是关于Pillar的内容，官方文档&lt;a href="http://docs.saltstack.com/topics/tutorials/pillar.html"&gt;在此&lt;/a&gt;&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt实战之自动安装部署MooseFS</title><link href="/kb/salt-auto-deploy-moosefs/" rel="alternate"></link><updated>2014-03-16T00:00:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-16:kb/salt-auto-deploy-moosefs/</id><summary type="html">&lt;ul&gt;
+&lt;p&gt;接下来是关于Pillar的内容，官方文档&lt;a href="http://docs.saltstack.com/topics/tutorials/pillar.html"&gt;在此&lt;/a&gt;&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt实战之自动安装部署MooseFS</title><link href="http://www.saltstack.cn/kb/salt-auto-deploy-moosefs/" rel="alternate"></link><updated>2014-03-16T00:00:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-16:kb/salt-auto-deploy-moosefs/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;作者: Rainbow+&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;暮然回首，我做运维已经有六年多了，从最开始那个一无所知的菜鸟，到现在能够胸有成竹的管理公司几百台服务器，中间走了不少的弯路。&lt;/p&gt;
@@ -2615,7 +2615,7 @@ mfs-cgi:
 &lt;p&gt;即具体的配置步骤，包括了mfsmaster的service启动，初始化数据文件，修改httpd.conf配置文件等，而这一部分的具体配置，大家可以在我的&lt;a href="/GitHub站点上看到所有详细的代码："&gt;GitHub&lt;/a&gt;
 &lt;a href="https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt"&gt;https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Salt默认的很多示例，目录结构非常简单，而我因为有“分类强迫症”，不喜欢将各类不同类型的文件放在同一个目录下，所以我创建了states和files以及templates目录来分别存放states，普通文件和配置文件。而创建_roles目录并在top.sls中引用，而不是通过直接引用moosefs.states.master这种方式，原因是我手里的服务器全是EC2上的云主机，主机名默认已经固定了，不方便自定义的规划，因此我在_roles目录下根据自身需要，根据线上服务器的角色创建了一些文件，在这些文件中再去引用相关的配置，这样，今后每台服务器就需要绑定好它对应的角色就可以了，更新_roles目录下的文件就可以更新所有对应的服务器。&lt;/p&gt;
-&lt;p&gt;当然，这些都是我实际环境中遇到的问题，也是我所构思出来的解决方法，我在本文中着重讲解了我的思路，以及Salt的工作流程，是因为我发现在我学习的过程中，它们给我带来的困扰和疑惑是最大的。具体的states实现，大家可以通过我在&lt;a href="/GitHub中分享的代码&amp;quot;https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt&amp;quot;:https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt，参考&amp;quot;《在CentOS上安装部署MooseFS分布式文件系统》&amp;quot;:http://heylinux.com/archives/2467.html文章中的步骤，来学习和理解。"&gt;GitHub&lt;/a&gt;&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt-API安装配置及使用</title><link href="/kb/salt-api-deploy-and-use/" rel="alternate"></link><updated>2014-03-09T15:21:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-09:kb/salt-api-deploy-and-use/</id><summary type="html">&lt;ul&gt;
+&lt;p&gt;当然，这些都是我实际环境中遇到的问题，也是我所构思出来的解决方法，我在本文中着重讲解了我的思路，以及Salt的工作流程，是因为我发现在我学习的过程中，它们给我带来的困扰和疑惑是最大的。具体的states实现，大家可以通过我在&lt;a href="/GitHub中分享的代码&amp;quot;https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt&amp;quot;:https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt，参考&amp;quot;《在CentOS上安装部署MooseFS分布式文件系统》&amp;quot;:http://heylinux.com/archives/2467.html文章中的步骤，来学习和理解。"&gt;GitHub&lt;/a&gt;&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt-API安装配置及使用</title><link href="http://www.saltstack.cn/kb/salt-api-deploy-and-use/" rel="alternate"></link><updated>2014-03-09T15:21:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-09:kb/salt-api-deploy-and-use/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://pengyao.org/salt-api-deploy-and-use.html"&gt;http://pengyao.org/salt-api-deploy-and-use.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a href="/pengyao"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -2897,7 +2897,7 @@ echo &amp;quot;pengyao_pass&amp;quot; | passwd pengyao —stdin
 匹配到名为 &lt;em&gt;webcluster&lt;/em&gt; 的target。&lt;/p&gt;
 &lt;h2&gt;总结&lt;/h2&gt;
 &lt;p&gt;Salt
-API几乎涵盖了所有的salt操作，功能强劲，尤其是需要salt和第三方系统集成的场景，值得拥有。&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>用salt管理成千上万的服务器</title><link href="/kb/salt-intro-1/" rel="alternate"></link><updated>2014-03-09T13:51:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-09:kb/salt-intro-1/</id><summary type="html">&lt;ul&gt;
+API几乎涵盖了所有的salt操作，功能强劲，尤其是需要salt和第三方系统集成的场景，值得拥有。&lt;/p&gt;</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>用salt管理成千上万的服务器</title><link href="http://www.saltstack.cn/kb/salt-intro-1/" rel="alternate"></link><updated>2014-03-09T13:51:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-09:kb/salt-intro-1/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;文章出处: &lt;a href="http://thinkinside.tk/2013/06/24/salt_intro.html"&gt;http://thinkinside.tk/2013/06/24/salt_intro.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a href="http://weibo.com/u/1878878250"&gt;HolbrookWong&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -3046,7 +3046,7 @@ salt &amp;#39;*&amp;#39; cmd.run &amp;quot;ab -n 10 -c 2 http://www.google.com/&
 &lt;li&gt;状态监控：随时掌握状态，发现异常。尽量在系统用户发现问题之前解决麻烦&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Salt对上述三个方面提供了完美的支持，事实上，Salt提供的功能比我需要的还要多。下图是Salt的主要功能：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" src="/images/salt_functions.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://www.saltstack.cn/images/salt_functions.png" /&gt;&lt;/p&gt;
 &lt;p&gt;具体的功能使用在&lt;a href="http://thinkinside.tk/2013/06/25/salt_usage.html"&gt;这篇文章&lt;/a&gt; 中详细说明。&lt;/p&gt;
 &lt;h2&gt;Salt的网络资源&lt;/h2&gt;
 &lt;h3&gt;网站&lt;/h3&gt;
@@ -3054,7 +3054,7 @@ salt &amp;#39;*&amp;#39; cmd.run &amp;quot;ab -n 10 -c 2 http://www.google.com/&
 &lt;li&gt;&lt;a href="http://saltstack.com/"&gt;salt官方网站&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="http://www.saltstack.cn/"&gt;中国SaltStack用户组网站&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="http://intothesaltmine.org/blog/html/index.html"&gt;Into The Salt Mine,关于Salt的各种安装、配置、使用的博客&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>深入SaltStack</title><link href="/kb/dive-into-saltstack/" rel="alternate"></link><updated>2014-03-09T11:42:00+08:00</updated><author><name>yinchuan</name></author><id>tag:,2014-03-09:kb/dive-into-saltstack/</id><summary type="html">&lt;ul&gt;
+&lt;/ul&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>深入SaltStack</title><link href="http://www.saltstack.cn/kb/dive-into-saltstack/" rel="alternate"></link><updated>2014-03-09T11:42:00+08:00</updated><author><name>yinchuan</name></author><id>tag:www.saltstack.cn,2014-03-09:kb/dive-into-saltstack/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://www.ituring.com.cn/article/37783"&gt;http://www.ituring.com.cn/article/37783&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;译者：&lt;a href="http://www.ituring.com.cn/users/99133"&gt;yinchuan&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -3262,7 +3262,7 @@ salt.example.com: 2.6.18-274.18.1.el5
 &lt;p&gt;Saltstack主页: &lt;a href="http://saltstack.org"&gt;http://saltstack.org&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Salt下载: &lt;a href="http://saltstack.org/download/"&gt;http://saltstack.org/download/&lt;/a&gt; (转载修正：该链接已失效)&lt;/p&gt;
 &lt;p&gt;Salt在GitHub: &lt;a href="https://github.com/saltstack/salt"&gt;https://github.com/saltstack/salt&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Salt开发者博客: &lt;a href="http://red45.wordpress.com/"&gt;http://red45.wordpress.com/&lt;/a&gt;&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>SaltStack初探</title><link href="/kb/salt-first-view/" rel="alternate"></link><updated>2014-03-09T11:22:00+08:00</updated><author><name>cssug</name></author><id>tag:,2014-03-09:kb/salt-first-view/</id><summary type="html">&lt;ul&gt;
+&lt;p&gt;Salt开发者博客: &lt;a href="http://red45.wordpress.com/"&gt;http://red45.wordpress.com/&lt;/a&gt;&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>SaltStack初探</title><link href="http://www.saltstack.cn/kb/salt-first-view/" rel="alternate"></link><updated>2014-03-09T11:22:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2014-03-09:kb/salt-first-view/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;文章来源: &lt;a href="http://www.oschina.net/translate/getting-started-salt-stack-other-configuration-management-system-built-python"&gt;http://www.oschina.net/translate/getting-started-salt-stack-other-configuration-management-system-built-python&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;原文: &lt;a href="http://www.linuxjournal.com/content/getting-started-salt-stack-other-configuration-management-system-built-python"&gt;http://www.linuxjournal.com/content/getting-started-salt-stack-other-configuration-management-system-built-python&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;译者: 葱油拌面 Lax&lt;/li&gt;
@@ -3444,7 +3444,7 @@ salt.example.com: 2.6.18-274.18.1.el5
 &lt;p&gt;现在你有能力一次在很多台机器上执行远程命令并且能够把配置文件存储在易维护的文本中。也可以安装特殊的软件包。&lt;/p&gt;
 &lt;p&gt;刚开始的时候，多花点心思。您可以根据自己的特定配置创建一个或多个服务器，并且下载不同的包到每台机器上。Salt 也可以不按顺序执行，有些命令会同时执行，假如其中一台执行失败，其他依然不受影响继续执行。&lt;/p&gt;
 &lt;p&gt;虽然在安装Salt比较费时，但是你以后会得到极大的好处，特别是可以让你创建特定的服务器和可重复使用的配置。&lt;/p&gt;
-&lt;p&gt;访问Salt项目得到更多的细节，多关注邮件列表和用户文档以及一些例子。你会发现社区会非常热心的帮助你处理问题。&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt整合reclass测试</title><link href="/kb/reclass-salt-01/" rel="alternate"></link><updated>2014-02-17T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:,2014-02-17:kb/reclass-salt-01/</id><summary type="html">&lt;ul class="simple"&gt;
+&lt;p&gt;访问Salt项目得到更多的细节，多关注邮件列表和用户文档以及一些例子。你会发现社区会非常热心的帮助你处理问题。&lt;/p&gt;</summary><category term="SaltStack"></category><category term="入门"></category></entry><entry><title>Salt整合reclass测试</title><link href="http://www.saltstack.cn/kb/reclass-salt-01/" rel="alternate"></link><updated>2014-02-17T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:www.saltstack.cn,2014-02-17:kb/reclass-salt-01/</id><summary type="html">&lt;ul class="simple"&gt;
 &lt;li&gt;原文出处: &lt;a class="reference external" href="http://pengyao.org/reclass-salt-01.html"&gt;http://pengyao.org/reclass-salt-01.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a class="reference external" href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -3614,7 +3614,7 @@ python setup.py install
 &lt;p&gt;salt pillar当前较弱, 只支持include, 并不支持extend等更高级的功能. 通过与reclass的整合, 借助reclass灵活的继承功能(支持多级继承), 为Salt提供专业的ENC服务, 弥补了pillar的不足.&lt;/p&gt;
 &lt;p&gt;当前reclass的功能相对较弱, 不过可以看到的是如Class subdirectories这类实用的功能已经在to-do list中, 期待reclass功能更为强大.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt配置复杂nodegroup</title><link href="/kb/salt-nodegroup-complex/" rel="alternate"></link><updated>2014-01-16T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:,2014-01-16:kb/salt-nodegroup-complex/</id><summary type="html">&lt;ul class="simple"&gt;
+</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>Salt配置复杂nodegroup</title><link href="http://www.saltstack.cn/kb/salt-nodegroup-complex/" rel="alternate"></link><updated>2014-01-16T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:www.saltstack.cn,2014-01-16:kb/salt-nodegroup-complex/</id><summary type="html">&lt;ul class="simple"&gt;
 &lt;li&gt;原文出处: &lt;a class="reference external" href="http://pengyao.org/salt-nodegroup-complex.html"&gt;http://pengyao.org/salt-nodegroup-complex.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a class="reference external" href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -3636,7 +3636,7 @@ python setup.py install
     &lt;span class="l l-Scalar l-Scalar-Plain"&gt;True&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;从输出来看, nodegroup嵌套是支持的&lt;/p&gt;
-</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>基于SaltStack完成LVS的配置管理</title><link href="/kb/howto_configure_linux_virtual_server_using_saltstack/" rel="alternate"></link><updated>2013-11-24T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:,2013-11-24:kb/howto_configure_linux_virtual_server_using_saltstack/</id><summary type="html">&lt;ul class="simple"&gt;
+</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>基于SaltStack完成LVS的配置管理</title><link href="http://www.saltstack.cn/kb/howto_configure_linux_virtual_server_using_saltstack/" rel="alternate"></link><updated>2013-11-24T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:www.saltstack.cn,2013-11-24:kb/howto_configure_linux_virtual_server_using_saltstack/</id><summary type="html">&lt;ul class="simple"&gt;
 &lt;li&gt;原文出处: &lt;a class="reference external" href="http://pengyao.org/howto_configure_linux_virtual_server_using_saltstack.html"&gt;http://pengyao.org/howto_configure_linux_virtual_server_using_saltstack.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a class="reference external" href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -3808,7 +3808,7 @@ wget https://raw.github.com/saltstack/salt/develop/salt/states/lvs_server.py -O 
 &lt;p&gt;本文中所用到的代码已经上传至github，传送门: &lt;a class="reference external" href="https://github.com/pengyao/salt-lvs"&gt;https://github.com/pengyao/salt-lvs&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>基于Salt Master/Minions快速构建Salt SSH环境</title><link href="/kb/howto_setup_salt_ssh_from_minion/" rel="alternate"></link><updated>2013-11-08T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:,2013-11-08:kb/howto_setup_salt_ssh_from_minion/</id><summary type="html">&lt;ul class="simple"&gt;
+</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>基于Salt Master/Minions快速构建Salt SSH环境</title><link href="http://www.saltstack.cn/kb/howto_setup_salt_ssh_from_minion/" rel="alternate"></link><updated>2013-11-08T00:00:00+08:00</updated><author><name>pengyao</name></author><id>tag:www.saltstack.cn,2013-11-08:kb/howto_setup_salt_ssh_from_minion/</id><summary type="html">&lt;ul class="simple"&gt;
 &lt;li&gt;原文出处: &lt;a class="reference external" href="http://pengyao.org/howto_setup_salt_ssh_from_minion.html"&gt;http://pengyao.org/howto_setup_salt_ssh_from_minion.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;作者: &lt;a class="reference external" href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -3940,7 +3940,7 @@ salt-ssh &lt;span class="s1"&gt;&amp;#39;*&amp;#39;&lt;/span&gt; -r &lt;span cla
 &lt;h2&gt;后话&lt;/h2&gt;
 &lt;p&gt;Salt这是要抢 &lt;a class="reference external" href="https://github.com/fabric/fabric"&gt;Fabric&lt;/a&gt; 饭碗的节奏啊，个人更喜欢Salt Master/Minions这样的管理方式，Salt SSH作为补充，用于升级Minion、重启Minion等等自维护工作还是很靠谱的。有了Salt SSH，再也不用担心是先有鸡还是先有蛋的问题了.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>【翻译】在SaltStack中使用Pillar</title><link href="/kb/using_pillar_data_in_saltstack/" rel="alternate"></link><updated>2013-04-19T00:00:00+08:00</updated><author><name>cssug</name></author><id>tag:,2013-04-19:kb/using_pillar_data_in_saltstack/</id><summary type="html">&lt;ul&gt;
+</summary><category term="SaltStack"></category><category term="进阶"></category></entry><entry><title>【翻译】在SaltStack中使用Pillar</title><link href="http://www.saltstack.cn/kb/using_pillar_data_in_saltstack/" rel="alternate"></link><updated>2013-04-19T00:00:00+08:00</updated><author><name>cssug</name></author><id>tag:www.saltstack.cn,2013-04-19:kb/using_pillar_data_in_saltstack/</id><summary type="html">&lt;ul&gt;
 &lt;li&gt;原文出处: &lt;a href="http://pengyao.org/using_pillar_data_in_saltstack.html"&gt;http://pengyao.org/using_pillar_data_in_saltstack.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;英文原文: &lt;a href="http://intothesaltmine.org/blog/html/2013/02/28/using_pillar_data_in_saltstack.html"&gt;http://intothesaltmine.org/blog/html/2013/02/28/using_pillar_data_in_saltstack.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;译者: &lt;a href="http://pengyao.org/"&gt;pengyao&lt;/a&gt;&lt;/li&gt;
