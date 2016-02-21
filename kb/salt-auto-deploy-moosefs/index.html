@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="cssug" />
+<meta name="description" content="Rainbow+分享的使用salt自动部署MooseFS案例" />
+<meta name="keywords" content="SaltStack, 进阶">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="Salt实战之自动安装部署MooseFS"/>
+<meta property="og:description" content="Rainbow+分享的使用salt自动部署MooseFS案例"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/salt-auto-deploy-moosefs/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-03-16 00:00:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/cssug.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="进阶"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; Salt实战之自动安装部署MooseFS</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="salt-auto-deploy-moosefs">Salt实战之自动安装部署MooseFS</h1>
+    <p>Posted on 2014-03-16 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul>
+<li>作者: Rainbow+</li>
+</ul>
+<p>暮然回首，我做运维已经有六年多了，从最开始那个一无所知的菜鸟，到现在能够胸有成竹的管理公司几百台服务器，中间走了不少的弯路。</p>
+<p>就拿批量管理服务器这块儿来说吧，几年前自己只会Shell脚本，在服务器不多的时候，感觉还忙的过来，到后来服务器越来越多的时候就不行了。写了很多的脚本放到计划任务中定期执行，能解决一部分工作，但效率还是很低下，因为服务器太多了，每次脚本有变动就需要在所有服务器上都更新一遍，非常痛苦，后来我学会了用expect来处理交互，但效率依然很低下，等脚本自动登录完所有的机器并执行完相关命令，至少30分钟过去了。</p>
+<p>然后，我加入了一些技术群，了解到了像Func，Puppet以及Chef这样的工具，并试着使用它们来管理服务器，效果真的很好。</p>
+<p>就在几个星期以前，在Puppet群里面，我听到了Salt这个词，“绿肥”天天在群里“拉客”，号称是Func+Puppet，用Python实现的，由于我对Python很有好感，也还算有点基础，于是就试着用了用Salt。</p>
+<p>学一个东西最快的方法就是用它去解决现有的实际问题，我选择了使用Salt来自动安装部署一套MooseFS分布式文件系统，结果，我花了1天的时间就完成了整个工作，同时对Salt好感也超越了Puppet，说实话，我现在非常愿意将线上所有Puppet相关的代码都用Salt来重写一遍，其中包括整个Hadoop集群的自动部署。</p>
+<p>好了，废话不多说，下面开始讲解整个实战过程！</p>
+<p>Salt其实也仅仅只是一个工具，解决问题的关键是我们的思路，正比如我能够用Salt来实现自动安装部署MooseFS，那么前提肯定是我了解手动安装部署MooseFS的整个过程。因此，建议大家先阅读我的《在CentOS上安装部署MooseFS分布式文件系统》<a href="http://heylinux.com/archives/2467.html">http://heylinux.com/archives/2467.html</a>
+这篇文章，了解如何通过手动的方式来安装部署MooseFS。</p>
+<p>接下来，我们首先要对Salt的基础进行一系列的学习，这里，我强烈推荐官网的Tutorial：<a href="http://docs.saltstack.com/topics/tutorials/walkthrough.html">http://docs.saltstack.com/topics/tutorials/walkthrough.html</a>
+在完成了整个Tutorial之后，通过Module
+Index页面，我们能够快速查阅Salt所有模块的功能与用法：<a href="http://docs.saltstack.com/py-modindex.html">http://docs.saltstack.com/py-modindex.html</a></p>
+<p>我的整个Salt代码结构如下：</p>
+<div class="highlight"><pre><span></span>$ tree
+.
+├── pillar
+│   ├── moosefs
+│   │   └── params.sls
+│   ├── _salt
+│   │   └── params.sls
+│   ├── schedules
+│   │   └── params.sls
+│   ├── top.sls
+│   └── users
+│       └── lists.sls
+├── README.md
+├── salt
+│   ├── moosefs
+│   │   ├── files
+│   │   │   └── index.html
+│   │   ├── states
+│   │   │   ├── chunkserver.sls
+│   │   │   ├── client.sls
+│   │   │   ├── common.sls
+│   │   │   ├── master.sls
+│   │   │   └── metalogger.sls
+│   │   └── templates
+│   │       ├── httpd.conf
+│   │       ├── mfschunkserver.cfg
+│   │       ├── mfsexports.cfg
+│   │       ├── mfshdd.cfg
+│   │       ├── mfsmaster.cfg
+│   │       └── mfsmetalogger.cfg
+│   ├── _roles
+│   │   ├── backup.sls
+│   │   ├── datanode.sls
+│   │   └── master.sls
+│   ├── _salt
+│   │   ├── states
+│   │   │   └── minion.sls
+│   │   └── templates
+│   │       └── minion
+│   ├── top.sls
+│   └── users
+│       └── states
+│           └── create.sls
+└── tools
+    ├── install_salt_minion.sh
+    └── tips.txt
+</pre></div>
+
+
+<p>Salt的默认配置需要存放在/srv下，在/srv/pillar中主要存放的是各类“参数”，而在/srv/salt下存放的是具体的state“代码文件”，以及配置文件的“模板”。</p>
+<p>Salt的入口文件分别是/srv/pillar/top.sls 与
+/srv/salt/top.sls，入口文件的意思就是，在minion“客户端”上，每次请求服务端配置的时候，它们实际上所请求的是这两个文件，虽然在上面有很多的文件，但其实它们都是通过这两个文件所关联起来的。</p>
+<p>比如在/srv/pillar/top.sls文件的内容是：</p>
+<div class="highlight"><pre><span></span>base:
+  &#39;*&#39;:
+    - _salt.params
+    - schedules.params
+    - moosefs.params
+    - users.lists
+</pre></div>
+
+
+<p>即针对所有的服务器(‘*’)，引用_salt，schedules以及moosefs目录下params.sls中的配置和users目录下lists.sls的配置。</p>
+<p>而/srv/salt/top.sls文件的内容是：</p>
+<div class="highlight"><pre><span></span>base:
+  &#39;*&#39;:
+    - _salt.states.minion
+    - users.states.create
+
+  &#39;ip-10-197-29-251.us-west-1.compute.internal&#39;:
+    - _roles.master
+    - _roles.datanode
+
+  &#39;ip-10-196-9-188.us-west-1.compute.internal&#39;:
+    - _roles.backup
+    - _roles.datanode
+
+  &#39;ip-10-197-62-239.us-west-1.compute.internal&#39;:
+    - _roles.datanode
+</pre></div>
+
+
+<p>即针对所有的服务器(‘*’)，引用_salt/states目录下minion.sls中的配置，以及users/states目录下create.sls中的配置；针对服务器ip-10-197-29-251.us-west-1.compute.internal，引用_roles目录下master.sls中的配置，其余两个主机类似。</p>
+<p>而_roles/master.sls文件的内容是：</p>
+<div class="highlight"><pre><span></span>include:
+  - moosefs.states.master
+</pre></div>
+
+
+<p>即引用 moosefs/states 目录下 master.sls的配置，进一步查看 master.sls
+的配置，就可以看到如下内容：</p>
+<div class="highlight"><pre><span></span>include:
+  - moosefs.states.common
+
+mfsmaster:
+  service:
+    - running
+    - require:
+      - cmd.run: mfsmaster
+  cmd.run:
+    - name: &#39;cp metadata.mfs.empty metadata.mfs&#39;
+    - cwd: /var/mfs/
+    - user: daemon
+    - unless: &#39;test -e metadata.mfs.back&#39;
+    - require:
+      - file: /etc/mfs/mfsmaster.cfg
+
+mfs-cgi:
+  pkg.installed:
+    - require:
+      - pkg: httpd
+...
+
+/etc/httpd/conf/httpd.conf:
+  file.managed:
+    - source: salt://moosefs/templates/httpd.conf
+    - template: jinja
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - pkg: httpd
+...
+</pre></div>
+
+
+<p>即具体的配置步骤，包括了mfsmaster的service启动，初始化数据文件，修改httpd.conf配置文件等，而这一部分的具体配置，大家可以在我的<a href="/GitHub站点上看到所有详细的代码：">GitHub</a>
+<a href="https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt">https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt</a></p>
+<p>Salt默认的很多示例，目录结构非常简单，而我因为有“分类强迫症”，不喜欢将各类不同类型的文件放在同一个目录下，所以我创建了states和files以及templates目录来分别存放states，普通文件和配置文件。而创建_roles目录并在top.sls中引用，而不是通过直接引用moosefs.states.master这种方式，原因是我手里的服务器全是EC2上的云主机，主机名默认已经固定了，不方便自定义的规划，因此我在_roles目录下根据自身需要，根据线上服务器的角色创建了一些文件，在这些文件中再去引用相关的配置，这样，今后每台服务器就需要绑定好它对应的角色就可以了，更新_roles目录下的文件就可以更新所有对应的服务器。</p>
+<p>当然，这些都是我实际环境中遇到的问题，也是我所构思出来的解决方法，我在本文中着重讲解了我的思路，以及Salt的工作流程，是因为我发现在我学习的过程中，它们给我带来的困扰和疑惑是最大的。具体的states实现，大家可以通过我在<a href="/GitHub中分享的代码&quot;https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt&quot;:https://github.com/mcsrainbow/HeyDevOps/tree/master/Salt，参考&quot;《在CentOS上安装部署MooseFS分布式文件系统》&quot;:http://heylinux.com/archives/2467.html文章中的步骤，来学习和理解。">GitHub</a></p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/jin-jie.html">进阶</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "Salt实战之自动安装部署MooseFS",
+  "headline": "Salt实战之自动安装部署MooseFS",
+  "datePublished": "2014-03-16 00:00:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "cssug",
+    "url": "http://www.saltstack.cn/author/cssug.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/salt-auto-deploy-moosefs/",
+  "description": "Rainbow+分享的使用salt自动部署MooseFS案例"
+}
+</script></body>
+</html>

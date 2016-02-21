@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="pengyao" />
+<meta name="description" content="reclass是一个外部节点分类器(External Node Classifier, ENC), 可以与自动化管理工具如PUPPET, Salt及Ansible进行整合. 就对reclass进行下学习, 看能为Salt带来什么." />
+<meta name="keywords" content="SaltStack, 进阶">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="Salt整合reclass测试"/>
+<meta property="og:description" content="reclass是一个外部节点分类器(External Node Classifier, ENC), 可以与自动化管理工具如PUPPET, Salt及Ansible进行整合. 就对reclass进行下学习, 看能为Salt带来什么."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/reclass-salt-01/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-02-17 00:00:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/pengyao.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="进阶"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; Salt整合reclass测试</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="reclass-salt-01">Salt整合reclass测试</h1>
+    <p>Posted on 2014-02-17 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul class="simple">
+<li>原文出处: <a class="reference external" href="http://pengyao.org/reclass-salt-01.html">http://pengyao.org/reclass-salt-01.html</a></li>
+<li>作者: <a class="reference external" href="http://pengyao.org/">pengyao</a></li>
+</ul>
+<div class="section" id="reclass">
+<h2>reclass基本介绍</h2>
+<ul class="simple">
+<li>项目地址: <a class="reference external" href="https://github.com/madduck/reclass/tree">https://github.com/madduck/reclass/tree</a></li>
+<li>手册地址: <a class="reference external" href="http://reclass.pantsfullofunix.net/index.html">http://reclass.pantsfullofunix.net/index.html</a></li>
+</ul>
+<p>reclass, 全称Recursive External Node Classification, 可以与自动化管理工具结合, 为其提供ENC服务. reclass作者认为, ENC软件应该提供如下两个功能:</p>
+<ul class="simple">
+<li>提供组(group)中节点(node)及组关系(group memberships)的信息</li>
+<li>提供节点指定的信息, 如变量</li>
+</ul>
+<p>对此, reclass定义了如下四种元素:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>元素</td>
+<td>描述</td>
+</tr>
+<tr><td>node</td>
+<td>一个节点, 通常是一个计算机</td>
+</tr>
+<tr><td>class</td>
+<td>一个分类(categroy),tag,特性(feature)或角色(role), 支持嵌套和继承</td>
+</tr>
+<tr><td>application</td>
+<td>一组行为(behaviour)</td>
+</tr>
+<tr><td>parameter</td>
+<td>节点指定的变量,可以通过class进行继承</td>
+</tr>
+</tbody>
+</table>
+<p>reclass在继承中, 如果parent中变量不存在, 则新增,如果存在同一变量, 类型为字符串, 则会进行覆盖. 如果变量为list类型, 则进行追加</p>
+</div>
+<div class="section" id="id1">
+<h2>reclass安装</h2>
+<div class="highlight"><pre><span></span>git clone https://github.com/madduck/reclass.git
+<span class="nb">cd</span> reclass
+python setup.py install
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h2>reclass配置及测试</h2>
+<p>测试目标: 通过reclass实现ntp变量的灵活扩展</p>
+<p>通用信息, <em>/srv/reclass/classes/ntp-common.yml</em></p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">parameters</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">ntp</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">ntpserver</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">0.asia.pool.ntp.org</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.asia.pool.ntp.org</span>
+</pre></div>
+<p>redhat系统继承ntp-common并进行一些特殊定制, <em>/srv/reclass/classes/ntp-redhat.yml</em></p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">classes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntp-common</span>
+
+<span class="l l-Scalar l-Scalar-Plain">parameters</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">ntp</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ntp</span>
+    <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ntpd</span>
+    <span class="l l-Scalar l-Scalar-Plain">ntpserver</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">2.asia.pool.ntp.org</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">3.asia.pool.ntp.org</span>
+</pre></div>
+<p>配置node, <em>/srv/reclass/nodes/salt-minion-01.yml</em></p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">classes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntp-redhat</span>
+</pre></div>
+<p>测试节点分类信息</p>
+<div class="highlight"><pre><span></span>reclass -b /srv/reclass --nodeinfo salt-minion-01
+</pre></div>
+<p>输出结果</p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">__reclass__</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">environment</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">base</span>
+  <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-minion-01</span>
+  <span class="l l-Scalar l-Scalar-Plain">node</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-minion-01</span>
+  <span class="l l-Scalar l-Scalar-Plain">timestamp</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Mon Feb 17 09:29:53 2014</span>
+  <span class="l l-Scalar l-Scalar-Plain">uri</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">yaml_fs:///srv/reclass/nodes/salt-minion-01.yml</span>
+<span class="l l-Scalar l-Scalar-Plain">applications</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+<span class="l l-Scalar l-Scalar-Plain">classes</span><span class="p p-Indicator">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntp-common</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntp-redhat</span>
+<span class="l l-Scalar l-Scalar-Plain">environment</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">base</span>
+<span class="l l-Scalar l-Scalar-Plain">parameters</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">ntp</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">ntpserver</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">0.asia.pool.ntp.org</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.asia.pool.ntp.org</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">2.asia.pool.ntp.org</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">3.asia.pool.ntp.org</span>
+    <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ntp</span>
+    <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ntpd</span>
+</pre></div>
+<p>从输出结果看, 与reclass手册描述一致</p>
+</div>
+<div class="section" id="reclasssalt">
+<h2>reclass与salt整合测试</h2>
+<p>Salt在0.17版本中,增加了 <a class="reference external" href="http://docs.saltstack.com/ref/tops/all/salt.tops.reclass_adapter.html">reclass的支持</a> .</p>
+<p>Salt与reclass元素对应关系</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>reclass元素</td>
+<td>Salt术语</td>
+</tr>
+<tr><td>nodes</td>
+<td>hosts</td>
+</tr>
+<tr><td>classes</td>
+<td>(none)</td>
+</tr>
+<tr><td>applications</td>
+<td>states</td>
+</tr>
+<tr><td>parameters</td>
+<td>pillar</td>
+</tr>
+</tbody>
+</table>
+<p>测试目标: 通过reclass为salt minion提供对应的ntp pillar信息</p>
+<p>测试环境: Salt Master/Minion结构, 版本0.17.5</p>
+<p>配置salt master, <em>/etc/salt/master</em></p>
+<div class="highlight"><pre><span></span><span class="nn">...</span>
+<span class="l l-Scalar l-Scalar-Plain">reclass</span><span class="p p-Indicator">:</span> <span class="nl">&amp;reclass</span>
+<span class="l l-Scalar l-Scalar-Plain">storage_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">yaml_fs</span>
+<span class="l l-Scalar l-Scalar-Plain">inventory_base_uri</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reclass</span>
+
+<span class="l l-Scalar l-Scalar-Plain">master_tops</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">reclass</span><span class="p p-Indicator">:</span> <span class="nv">*reclass</span>
+
+<span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">reclass</span><span class="p p-Indicator">:</span> <span class="nv">*reclass</span>
+</pre></div>
+<p>重启salt master</p>
+<div class="highlight"><pre><span></span>service salt-master restart
+</pre></div>
+<p>测试salt-minion-01对应的ntp pillar</p>
+<div class="highlight"><pre><span></span>salt <span class="s1">&#39;salt-minion-01&#39;</span> pillar.item ntp
+</pre></div>
+<p>输出结果</p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt-minion-01</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">----------</span>
+    <span class="l l-Scalar l-Scalar-Plain">ntp</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">----------</span>
+        <span class="l l-Scalar l-Scalar-Plain">ntpserver</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">0.asia.pool.ntp.org</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.asia.pool.ntp.org</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">2.asia.pool.ntp.org</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">3.asia.pool.ntp.org</span>
+        <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">ntp</span>
+        <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">ntpd</span>
+</pre></div>
+<p>达成测试目标</p>
+</div>
+<div class="section" id="id4">
+<h2>总结</h2>
+<p>salt pillar当前较弱, 只支持include, 并不支持extend等更高级的功能. 通过与reclass的整合, 借助reclass灵活的继承功能(支持多级继承), 为Salt提供专业的ENC服务, 弥补了pillar的不足.</p>
+<p>当前reclass的功能相对较弱, 不过可以看到的是如Class subdirectories这类实用的功能已经在to-do list中, 期待reclass功能更为强大.</p>
+</div>
+
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/jin-jie.html">进阶</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "Salt整合reclass测试",
+  "headline": "Salt整合reclass测试",
+  "datePublished": "2014-02-17 00:00:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "pengyao",
+    "url": "http://www.saltstack.cn/author/pengyao.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/reclass-salt-01/",
+  "description": "reclass是一个外部节点分类器(External Node Classifier, ENC), 可以与自动化管理工具如PUPPET, Salt及Ansible进行整合. 就对reclass进行下学习, 看能为Salt带来什么."
+}
+</script></body>
+</html>

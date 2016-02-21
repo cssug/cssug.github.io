@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="cssug" />
+<meta name="description" content="pengyao翻译的使用" />
+<meta name="keywords" content="SaltStack, 入门">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="使用Salt管理用户"/>
+<meta property="og:description" content="pengyao翻译的使用"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/managing-user-with-salt/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-03-16 18:35:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/cssug.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="入门"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; 使用Salt管理用户</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="managing-user-with-salt">使用Salt管理用户</h1>
+    <p>Posted on 2014-03-16 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul>
+<li>原文出处: <a href="http://pengyao.org/managing_user_with_salt.html">http://pengyao.org/managing_user_with_salt.html</a></li>
+<li>英文原文出处: <a href="http://intothesaltmine.org/blog/html/2012/12/11/managing_users_with_salt.html">http://intothesaltmine.org/blog/html/2012/12/11/managing_users_with_salt.html</a></li>
+<li>译者: <a href="http://pengyao.org/">pengyao</a></li>
+</ul>
+<p>使用Salt在多平台进行用户管理将变得非常简单。 user模块允许管理员管理(原文为present)账户各个方面和删除(absent)账户。本篇文章将描述user模块的各个组件，并将给出一个管理账户的state例子.</p>
+<h2>user.present</h2>
+<p><em>user.present</em>: 确保指定的账户名存在,并指定其对应的属性. 这些属性包括如下内容:</p>
+<p><strong>name</strong>: 指定需要管理的账户名.</p>
+<p><strong>uid</strong>: 指定uid, 如果不设置将配自动分配下一个有效的uid.</p>
+<p><strong>gid</strong>: 指定默认的组id(group id)</p>
+<p><strong>gid_from_name</strong>: 如果设置为_True_，默认的组id将自动设置为和本用户同名的组id</p>
+<p><strong>groups</strong>: 分配给该用户的组列表(a list of groups). 如果组在minion上不存在，则本state会报错. 如果设置会空，将会删除本用户所属的除了默认组之外的其他组</p>
+<p><strong>optional_groups</strong>: 分配给用户的组列表。 如果组在minion上不存在，则state会忽略它.</p>
+<p><strong>home</strong>: 关于用户的家目录(home directory).</p>
+<p><strong>password</strong>: 设置用户hash之后的密码.</p>
+<p><strong>enforce_password</strong>: 当设置为_False_时，如果设置的_password_与用户原密码不同，将保持原密码不做更改.如果没有设置_password_选项，该选项将自动忽略掉.</p>
+<p><strong>shell</strong>: 指定用户的login shell。 默认将设置为系统默认shell。</p>
+<p><strong>unique</strong>: UID唯一，默认为True.</p>
+<p><strong>system</strong>: 从_FIRST_SYSTEM_UID_和_LAST_SYSTEM_UID_间选择一个随机的UID.</p>
+<hr />
+<p>用户描述选项(GECOS)支持(当前只支持Linux和FreeBSD系统):</p>
+<p><strong>fullname</strong>: 指定用户全名(full name).</p>
+<p><strong>roomnumber</strong>: 指定用户的房间号.</p>
+<p><strong>workphone</strong>: 指定用户的工作电话号码.</p>
+<p><strong>homephone</strong>: 指定用户的家庭电话号码.</p>
+<h2>user.absent</h2>
+<ul>
+<li>本部分为译者依据官方手册进行的补充，原文中并没有相关内容</li>
+</ul>
+<p><em>user.absent</em> 用于删除用户.其有以下选项:</p>
+<p><strong>name</strong>: 指定需要删除的用户名.</p>
+<p><strong>purge</strong>: 设置清除用户的文件(家目录)</p>
+<p><strong>force</strong>: 如果用户当前已登录，则absent state会失败. 设置_force_选项为True时，就算用户当前处于登录状态也会删除本用户.</p>
+<p>当管理用户时，至少需要指定_user.present_或_user.absent_。 其他选项是可选的，比如_uid_、<em>gid</em>、_home_等选项没有指定是，将自动使用下一个有效的或者系统默认的.</p>
+<h2>users.sls</h2>
+<p>下面将列出一个管理_cedwards_用户的state声明例子. 本state中定义了_fullname_、<em>shell</em>、<em>home</em>、<em>uid</em>、_gid_和_groups_列:</p>
+<div class="highlight"><pre><span></span><span class="n">cedwards</span><span class="o">:</span>
+  <span class="n">user</span><span class="o">.</span><span class="na">present</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">fullname</span><span class="o">:</span> <span class="n">Christer</span> <span class="n">Edwards</span>
+    <span class="o">-</span> <span class="n">password</span><span class="o">:</span> <span class="s1">&#39;$6$JyhDBiOi5ZyvaDWm$.5QKIgCtYOLXpLDCc9HMJ8fnAq.c3enJ32BIWGcuKt/y2awHL3w2PlNLxJD9gHE/FtKkG348P8HArXGSkd5uC/&#39;</span>
+    <span class="o">-</span> <span class="n">shell</span><span class="o">:</span> <span class="sr">/usr/local/bin/</span><span class="n">bash</span>
+    <span class="o">-</span> <span class="n">home</span><span class="o">:</span> <span class="sr">/home/</span><span class="n">cedwards</span>
+    <span class="o">-</span> <span class="n">uid</span><span class="o">:</span> <span class="mi">1001</span>
+    <span class="o">-</span> <span class="n">gid</span><span class="o">:</span> <span class="mi">1001</span>
+    <span class="o">-</span> <span class="n">groups</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">wheel</span>
+
+<span class="n">jdoe</span><span class="o">:</span>
+  <span class="n">user</span><span class="o">.</span><span class="na">absent</span>
+</pre></div>
+
+
+<p>(尽管本例中指定的密码并不是我真实的密码，不过例子中出现的密码hash串并不是一个好主意)</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/ru-men.html">入门</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "使用Salt管理用户",
+  "headline": "使用Salt管理用户",
+  "datePublished": "2014-03-16 18:35:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "cssug",
+    "url": "http://www.saltstack.cn/author/cssug.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/managing-user-with-salt/",
+  "description": "pengyao翻译的使用"
+}
+</script></body>
+</html>

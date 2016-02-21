@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="cssug" />
+<meta name="description" content="pengyao翻译的<在SaltStack中如何使用require及watch语法>" />
+<meta name="keywords" content="SaltStack, 入门">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="在SaltStack中如何使用require及watch语法"/>
+<meta property="og:description" content="pengyao翻译的<在SaltStack中如何使用require及watch语法>"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/howto-use-require-and-watch-statements/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-03-16 18:40:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/cssug.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="入门"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; 在SaltStack中如何使用require及watch语法</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="howto-use-require-and-watch-statements">在SaltStack中如何使用require及watch语法</h1>
+    <p>Posted on 2014-03-16 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul>
+<li>原文出处: <a href="http://pengyao.org/howto_to_use_require_and_watch_statements.html">http://pengyao.org/howto_to_use_require_and_watch_statements.html</a></li>
+<li>英文原文出处: <a href="http://intothesaltmine.org/how_to_use_require_and_watch_statements.html">http://intothesaltmine.org/how_to_use_require_and_watch_statements.html</a></li>
+<li>译者: <a href="http://pengyao.org/">pengyao</a></li>
+</ul>
+<p>在SaltStack配置关系系统中支持许多强大的选项。无论是简单的如软件包的安装还是使用模板和条件语句. SaltStack States可以从小巧逐步变得很复杂。幸运的是SaltStack提供一种用于解决States间依赖关系的方法. 本小节将讲述如何使用 <code>require</code>、@require_in@、@watch@、@watch_in@</p>
+<h2>Requisites</h2>
+<p>在SaltStack的世界中，requisites(译者注: 该词没找到合适的中文翻译，暂时使用英文原词)有两种类型，直接的requisites和&quot;requisite_ins&quot;。这些requisites是方向性的(directional)，用于指定说&quot;我依赖于某些东西&quot;或&quot;一些东西依赖于我&quot;</p>
+<h3>require</h3>
+<p>下边是使用 <code>require</code> 语法的例子:</p>
+<div class="highlight"><pre><span></span><span class="n">vim</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="o">.</span><span class="na">installed</span>
+
+<span class="sr">/etc/</span><span class="n">vimrc</span><span class="o">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="na">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">://</span><span class="n">edit</span><span class="o">/</span><span class="n">vimrc</span>
+    <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">vim</span>
+</pre></div>
+
+
+<p>在这个例子中， <code>/etc/vimrc</code> 文件并不会被placed(managed)，直到 <code>vim</code> 软件包已安装</p>
+<h3>require_in</h3>
+<p>下边是同样的例子，只是这次使用了 <code>require_in</code> :</p>
+<div class="highlight"><pre><span></span><span class="n">vim</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="o">.</span><span class="na">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">require_in</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="sr">/etc/</span><span class="n">vimrc</span>
+
+<span class="sr">/etc/</span><span class="n">vimrc</span><span class="o">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="na">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">://</span><span class="n">edit</span><span class="o">/</span><span class="n">vimrc</span>
+</pre></div>
+
+
+<p>这个例子的效果是相同的，在 <code>vim</code> 中指定了 <code>/etc/vimrc</code> 依赖于我</p>
+<p>在最后，将会创建一个从属(dependency)map，并以有限的(finite)及可预见的(predictable)顺序执行.</p>
+<h3>watch</h3>
+<p>下面将以 <code>watch</code> 语法举例，在本例中，运行中的 <code>ntpd</code> 服务将会关注 <code>/etc/ntp.conf</code> 文件的变化，如果发生变化，将会触发重启服务的操作.</p>
+<div class="highlight"><pre><span></span><span class="n">ntpd</span><span class="o">:</span>
+  <span class="n">service</span><span class="o">.</span><span class="na">running</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">watch</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="sr">/etc/</span><span class="n">ntp</span><span class="o">.</span><span class="na">conf</span>
+
+<span class="sr">/etc/</span><span class="n">ntp</span><span class="o">.</span><span class="na">conf</span><span class="o">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="na">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">://</span><span class="n">ntp</span><span class="sr">/files/</span><span class="n">ntp</span><span class="o">.</span><span class="na">conf</span>
+</pre></div>
+
+
+<h3>watch_in</h3>
+<p>在接下来例子中， <code>/etc/ntp.conf</code> 声明(declaring)它应该被 <code>ntpd</code> 服务watch</p>
+<div class="highlight"><pre><span></span><span class="n">ntpd</span><span class="o">:</span>
+  <span class="n">service</span><span class="o">.</span><span class="na">running</span>
+
+<span class="sr">/etc/</span><span class="n">ntp</span><span class="o">.</span><span class="na">conf</span><span class="o">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="na">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">://</span><span class="n">ntp</span><span class="sr">/files/</span><span class="n">ntp</span><span class="o">.</span><span class="na">conf</span>
+    <span class="o">-</span> <span class="n">watch_in</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">service</span><span class="o">:</span> <span class="n">ntpd</span>
+</pre></div>
+
+
+<h2>总结(Conclusion)</h2>
+<p>在State规则中，你可以通过强大的 <code>require</code> 、 <code>require_in</code> 、 <code>watch</code> 及 <code>watch_in</code> 指定state间的依赖关系. 无论是一个服务应该watch一个文件的变化，还是一个服务运行前必须确保软件包已安装都可以通过它们来指定state的逻辑执行顺序.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/ru-men.html">入门</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "在SaltStack中如何使用require及watch语法",
+  "headline": "在SaltStack中如何使用require及watch语法",
+  "datePublished": "2014-03-16 18:40:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "cssug",
+    "url": "http://www.saltstack.cn/author/cssug.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/howto-use-require-and-watch-statements/",
+  "description": "pengyao翻译的<在SaltStack中如何使用require及watch语法>"
+}
+</script></body>
+</html>

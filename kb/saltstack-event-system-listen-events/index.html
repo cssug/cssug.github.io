@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="cssug" />
+<meta name="description" content="pengyao分享的基于SaltStack Event系统进行监听events的测试用例" />
+<meta name="keywords" content="SaltStack, 进阶">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="SaltStack Event系统监听events测试"/>
+<meta property="og:description" content="pengyao分享的基于SaltStack Event系统进行监听events的测试用例"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/saltstack-event-system-listen-events/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-04-24 09:03:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/cssug.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="进阶"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; SaltStack Event系统监听events测试</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="saltstack-event-system-listen-events">SaltStack Event系统监听events测试</h1>
+    <p>Posted on 2014-04-24 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul>
+<li>原文出处: <a href="http://pengyao.org/saltstack_event_system_listen_events.html">http://pengyao.org/saltstack_event_system_listen_events.html</a></li>
+<li>作者: <a href="http://pengyao.org/">pengyao</a></li>
+</ul>
+<p>{{toc}}</p>
+<p>SaltStack 0.10版本中, 新增了Event系统, 官方在 <a href="http://docs.saltstack.com/en/latest/topics/releases/0.10.0.html#event-system">Release
+Notes</a>
+对其描述如下:</p>
+<blockquote>
+<p>The Salt Master now comes equipped with a new event system. This event
+system has replaced some of the back end of the Salt client and offers
+the beginning of a system which will make plugging external applications
+into Salt. The event system relies on a local ZeroMQ publish socket and
+other processes can connect to this socket and listen for events. The
+new events can be easily managed via Salt’s event library.</p>
+</blockquote>
+<p>同时官方也在 <a href="http://docs.saltstack.com/en/latest/topics/event/index.html#listening-for-events">Salt
+Event系统</a>
+页面中提供了监听event的例子程序, 基于其进行下Event系统学习.</p>
+<h2>环境说明</h2>
+<ul>
+<li>测试结构: Master/Minions结构, 共一台minion, 对应id为:
+    <em>salt-minion-01.example.com</em></li>
+<li>Salt Version: <em>2014.1.1</em></li>
+</ul>
+<h2>开工</h2>
+<p>新开一个终端, 运行python, 基于其尝试监听所有的Event:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.utils.event</span>
+
+<span class="n">event</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">MasterEvent</span><span class="p">(</span><span class="s1">&#39;/var/run/salt/master&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">eachevent</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">iter_events</span><span class="p">(</span><span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">eachevent</span>
+    <span class="k">print</span> <span class="s2">&quot;------&quot;</span>
+</pre></div>
+
+
+<p>在另外一个终端执行:</p>
+<div class="highlight"><pre><span></span>salt &#39;*&#39; test.ping
+</pre></div>
+
+
+<p>查看之前监听所有Event的终端, 有如下输出:</p>
+<div class="highlight"><pre><span></span>{&#39;tag&#39;: &#39;20140417135823133764&#39;, &#39;data&#39;: {&#39;_stamp&#39;: &#39;2014-04-17T13:58:23.133956&#39;, &#39;minions&#39;: [&#39;salt-minion-01.example.com&#39;]}}
+------
+{&#39;tag&#39;: &#39;new_job&#39;, &#39;data&#39;: {&#39;tgt_type&#39;: &#39;glob&#39;, &#39;jid&#39;: &#39;20140417135823133764&#39;, &#39;tgt&#39;: &#39;*&#39;, &#39;_stamp&#39;: &#39;2014-04-17T13:58:23.134005&#39;, &#39;user&#39;: &#39;sudo_vagrant&#39;, &#39;arg&#39;: [], &#39;fun&#39;: &#39;test.ping&#39;, &#39;minions&#39;: [&#39;salt-minion-01.example.com&#39;]}}
+------
+{&#39;tag&#39;: &#39;salt/job/20140417135823133764/new&#39;, &#39;data&#39;: {&#39;tgt_type&#39;: &#39;glob&#39;, &#39;jid&#39;: &#39;20140417135823133764&#39;, &#39;tgt&#39;: &#39;*&#39;, &#39;_stamp&#39;: &#39;2014-04-17T13:58:23.134064&#39;, &#39;user&#39;: &#39;sudo_vagrant&#39;, &#39;arg&#39;: [], &#39;fun&#39;: &#39;test.ping&#39;, &#39;minions&#39;: [&#39;salt-minion-01.example.com&#39;]}}
+------
+{&#39;tag&#39;: &#39;20140417135823133764&#39;, &#39;data&#39;: {&#39;fun_args&#39;: [], &#39;jid&#39;: &#39;20140417135823133764&#39;, &#39;return&#39;: True, &#39;retcode&#39;: 0, &#39;success&#39;: True, &#39;cmd&#39;: &#39;_return&#39;, &#39;_stamp&#39;: &#39;2014-04-17T13:58:23.150356&#39;, &#39;fun&#39;: &#39;test.ping&#39;, &#39;id&#39;: &#39;salt-minion-01.example.com&#39;}}
+------
+{&#39;tag&#39;: &#39;salt/job/20140417135823133764/ret/salt-minion-01.example.com&#39;, &#39;data&#39;: {&#39;fun_args&#39;: [], &#39;jid&#39;: &#39;20140417135823133764&#39;, &#39;return&#39;: True, &#39;retcode&#39;: 0, &#39;success&#39;: True, &#39;cmd&#39;: &#39;_return&#39;, &#39;_stamp&#39;: &#39;2014-04-17T13:58:23.150397&#39;, &#39;fun&#39;: &#39;test.ping&#39;, &#39;id&#39;: &#39;salt-minion-01.example.com&#39;}}
+------
+</pre></div>
+
+
+<p>从输出结果看, 对于tag只是jid的, 官方在源码中标记的注释是&quot;old dup
+event&quot;, 推测是为了兼容旧的event系统(0.17.0版本event系统进行了更新),
+本次对其不做处理. 下发任务对应的tag为 <em>new_job</em>,
+并且下发任务时就master端就在event中注定了那些minions需要运行(对应的data字典中的minions).
+如果tag中包含 <em>salt/job/</em> 字样并且data字典中 <em>return</em> 为True,
+则表示该Event是minion返回的结果.</p>
+<p>同时测试下超过timeout设置(默认为5秒)的任务:</p>
+<div class="highlight"><pre><span></span>salt &#39;*&#39; cmd.run &#39;sleep 6; echo hello world&#39;
+</pre></div>
+
+
+<p>输出结果为:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141834578593&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:34.578822&#39;</span><span class="o">,</span> <span class="s1">&#39;minions&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="cp">]</span><span class="p">}</span><span class="err">}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;new_job&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;tgt_type&#39;</span><span class="o">:</span> <span class="s1">&#39;glob&#39;</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141834578593&#39;</span><span class="o">,</span> <span class="s1">&#39;tgt&#39;</span><span class="o">:</span> <span class="s1">&#39;*&#39;</span><span class="o">,</span> <span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:34.578881&#39;</span><span class="o">,</span> <span class="s1">&#39;user&#39;</span><span class="o">:</span> <span class="s1">&#39;sudo_vagrant&#39;</span><span class="o">,</span> <span class="s1">&#39;arg&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;sleep 6; echo hello world&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;cmd.run&#39;</span><span class="o">,</span> <span class="s1">&#39;minions&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="cp">]</span><span class="p">}</span><span class="err">}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;salt/job/20140417141834578593/new&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;tgt_type&#39;</span><span class="o">:</span> <span class="s1">&#39;glob&#39;</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141834578593&#39;</span><span class="o">,</span> <span class="s1">&#39;tgt&#39;</span><span class="o">:</span> <span class="s1">&#39;*&#39;</span><span class="o">,</span> <span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:34.578917&#39;</span><span class="o">,</span> <span class="s1">&#39;user&#39;</span><span class="o">:</span> <span class="s1">&#39;sudo_vagrant&#39;</span><span class="o">,</span> <span class="s1">&#39;arg&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;sleep 6; echo hello world&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;cmd.run&#39;</span><span class="o">,</span> <span class="s1">&#39;minions&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="cp">]</span><span class="p">}</span><span class="err">}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141839587706&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:39.587908&#39;</span><span class="o">,</span> <span class="s1">&#39;minions&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="cp">]</span><span class="p">}</span><span class="err">}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;new_job&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;tgt_type&#39;</span><span class="o">:</span> <span class="s1">&#39;glob&#39;</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141839587706&#39;</span><span class="o">,</span> <span class="s1">&#39;tgt&#39;</span><span class="o">:</span> <span class="s1">&#39;*&#39;</span><span class="o">,</span> <span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:39.587961&#39;</span><span class="o">,</span> <span class="s1">&#39;user&#39;</span><span class="o">:</span> <span class="s1">&#39;sudo_vagrant&#39;</span><span class="o">,</span> <span class="s1">&#39;arg&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;20140417141834578593&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;saltutil.find_job&#39;</span><span class="o">,</span> <span class="s1">&#39;minions&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="cp">]</span><span class="p">}</span><span class="err">}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;salt/job/20140417141839587706/new&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;tgt_type&#39;</span><span class="o">:</span> <span class="s1">&#39;glob&#39;</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141839587706&#39;</span><span class="o">,</span> <span class="s1">&#39;tgt&#39;</span><span class="o">:</span> <span class="s1">&#39;*&#39;</span><span class="o">,</span> <span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:39.587985&#39;</span><span class="o">,</span> <span class="s1">&#39;user&#39;</span><span class="o">:</span> <span class="s1">&#39;sudo_vagrant&#39;</span><span class="o">,</span> <span class="s1">&#39;arg&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;20140417141834578593&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;saltutil.find_job&#39;</span><span class="o">,</span> <span class="s1">&#39;minions&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="cp">]</span><span class="p">}</span><span class="err">}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141839587706&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;fun_args&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;20140417141834578593&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141839587706&#39;</span><span class="o">,</span> <span class="s1">&#39;return&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;tgt_type&#39;</span><span class="o">:</span> <span class="s1">&#39;glob&#39;</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141834578593&#39;</span><span class="o">,</span> <span class="s1">&#39;tgt&#39;</span><span class="o">:</span> <span class="s1">&#39;*&#39;</span><span class="o">,</span> <span class="s1">&#39;pid&#39;</span><span class="o">:</span> <span class="m">2143</span><span class="o">,</span> <span class="s1">&#39;ret&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">,</span> <span class="s1">&#39;user&#39;</span><span class="o">:</span> <span class="s1">&#39;sudo_vagrant&#39;</span><span class="o">,</span> <span class="s1">&#39;arg&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;sleep 6; echo hello world&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;cmd.run&#39;</span><span class="p">}</span><span class="o">,</span> <span class="s1">&#39;retcode&#39;</span><span class="o">:</span> <span class="nt">0</span><span class="o">,</span> <span class="s1">&#39;success&#39;</span><span class="o">:</span> <span class="nt">True</span><span class="o">,</span> <span class="s1">&#39;cmd&#39;</span><span class="o">:</span> <span class="s1">&#39;_return&#39;</span><span class="o">,</span> <span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:39.605262&#39;</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;saltutil.find_job&#39;</span><span class="o">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="err">}}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;salt/job/20140417141839587706/ret/salt-minion-01.example.com&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;fun_args&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;20140417141834578593&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141839587706&#39;</span><span class="o">,</span> <span class="s1">&#39;return&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;tgt_type&#39;</span><span class="o">:</span> <span class="s1">&#39;glob&#39;</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141834578593&#39;</span><span class="o">,</span> <span class="s1">&#39;tgt&#39;</span><span class="o">:</span> <span class="s1">&#39;*&#39;</span><span class="o">,</span> <span class="s1">&#39;pid&#39;</span><span class="o">:</span> <span class="m">2143</span><span class="o">,</span> <span class="s1">&#39;ret&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">,</span> <span class="s1">&#39;user&#39;</span><span class="o">:</span> <span class="s1">&#39;sudo_vagrant&#39;</span><span class="o">,</span> <span class="s1">&#39;arg&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;sleep 6; echo hello world&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;cmd.run&#39;</span><span class="p">}</span><span class="o">,</span> <span class="s1">&#39;retcode&#39;</span><span class="o">:</span> <span class="nt">0</span><span class="o">,</span> <span class="s1">&#39;success&#39;</span><span class="o">:</span> <span class="nt">True</span><span class="o">,</span> <span class="s1">&#39;cmd&#39;</span><span class="o">:</span> <span class="s1">&#39;_return&#39;</span><span class="o">,</span> <span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:39.605321&#39;</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;saltutil.find_job&#39;</span><span class="o">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="err">}}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141834578593&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;fun_args&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;sleep 6; echo hello world&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141834578593&#39;</span><span class="o">,</span> <span class="s1">&#39;return&#39;</span><span class="o">:</span> <span class="s1">&#39;hello world&#39;</span><span class="o">,</span> <span class="s1">&#39;retcode&#39;</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="s1">&#39;success&#39;</span><span class="o">:</span> <span class="n">True</span><span class="o">,</span> <span class="s1">&#39;cmd&#39;</span><span class="o">:</span> <span class="s1">&#39;_return&#39;</span><span class="o">,</span> <span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:40.604562&#39;</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;cmd.run&#39;</span><span class="o">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="p">}</span><span class="err">}</span>
+<span class="nt">------</span>
+<span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="o">:</span> <span class="s1">&#39;salt/job/20140417141834578593/ret/salt-minion-01.example.com&#39;</span><span class="o">,</span> <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="err">{</span><span class="s1">&#39;fun_args&#39;</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;sleep 6; echo hello world&#39;</span><span class="cp">]</span><span class="o">,</span> <span class="s1">&#39;jid&#39;</span><span class="o">:</span> <span class="s1">&#39;20140417141834578593&#39;</span><span class="o">,</span> <span class="s1">&#39;return&#39;</span><span class="o">:</span> <span class="s1">&#39;hello world&#39;</span><span class="o">,</span> <span class="s1">&#39;retcode&#39;</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="s1">&#39;success&#39;</span><span class="o">:</span> <span class="n">True</span><span class="o">,</span> <span class="s1">&#39;cmd&#39;</span><span class="o">:</span> <span class="s1">&#39;_return&#39;</span><span class="o">,</span> <span class="s1">&#39;_stamp&#39;</span><span class="o">:</span> <span class="s1">&#39;2014-04-17T14:18:40.604628&#39;</span><span class="o">,</span> <span class="s1">&#39;fun&#39;</span><span class="o">:</span> <span class="s1">&#39;cmd.run&#39;</span><span class="o">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;salt-minion-01.example.com&#39;</span><span class="p">}</span><span class="err">}</span>
+<span class="nt">------</span>
+</pre></div>
+
+
+<p>除了之前test.ping测试类似的输出外, 可以看到tag为 <em>new_job</em>
+的event产生后的5秒, 自动产生了一个fun值为 <em>saltutil.find_job</em>,
+其arg为之前new_job的jid的event. 然后minion返回之前运行的fun值为
+<em>cmd.run</em> 对应的进行运行信息(pid等信息, 已确保任务正在被执行).</p>
+<p>Salt对应的处理机制是master在下发指令后,如果在设置的timeout时间内,
+所有minion均返回了结果, 则直接退出. 如果达到timeout时间后,
+依然有minion没有返回结果, 则自动触发一个 <em>saltutil.find_job</em> 的任务,
+去所有minion上查询该任务是否在执行. 如果minion返回任务当前正在执行中,
+则等待一个新的timeout周期, 如果期间所有minion均返回了结果, 则退出;
+依次类推, 一直等到直到所有minion均返回结果. 如果期间在触发
+<em>saltutil.find_job</em> 时minion并没有返回任务的执行状况,
+且之前并没有返回结果, 则认为minion出现问题, 就会输出&quot;Minion did not
+return&quot; 字样(可以通过salt -v参数查询到).</p>
+<p>从该机制中可以知道, 如果经常出现minion无法返回结果的情况,
+对于某些场景如规模较大或minion高负载的情况下, 达到设置的timeout时间时,
+自动触发 <em>saltutil.find_job</em> 任务,
+而minion此时并没有开始运行之前下发的任务. 导致master直接认为&quot;Minion
+did not return&quot;.
+此时需要增大timeout的值(可以修改master的配置文件中的timeout选项)</p>
+<p>同时由于master会自动触发 <em>saltutil.find_job</em> 任务,
+而该任务也会记入Event系统, 所以对于如Halite等第三方系统,
+执行长时间的任务时, 你会发现大量的 <em>saltutil.find_job</em> 操作,
+此为正常现象, 无需处理(当然, 有洁癖的同学可能会不爽).</p>
+<h2>总结</h2>
+<p>Salt提供了强大的Event系统, 第三方程序可以轻松插入Event系统,
+捕获当前Salt的运行状态, 易于扩展Salt功能.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/jin-jie.html">进阶</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "SaltStack Event系统监听events测试",
+  "headline": "SaltStack Event系统监听events测试",
+  "datePublished": "2014-04-24 09:03:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "cssug",
+    "url": "http://www.saltstack.cn/author/cssug.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/saltstack-event-system-listen-events/",
+  "description": "pengyao分享的基于SaltStack Event系统进行监听events的测试用例"
+}
+</script></body>
+</html>

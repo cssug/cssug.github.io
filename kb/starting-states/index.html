@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="cssug" />
+<meta name="description" content="yinchuan分享的Salt States概览" />
+<meta name="keywords" content="SaltStack, 入门">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="Salt States概览"/>
+<meta property="og:description" content="yinchuan分享的Salt States概览"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/starting-states/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-03-16 18:18:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/cssug.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="入门"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; Salt States概览</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="starting-states">Salt States概览</h1>
+    <p>Posted on 2014-03-16 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul>
+<li>原文出处: <a href="http://www.ituring.com.cn/article/42238">http://www.ituring.com.cn/article/42238</a></li>
+<li>作者: yinchuan</li>
+</ul>
+<h2>作者言</h2>
+<p>我也只是SaltStack的初学者，如果文中有错误的地方，请不吝赐教。</p>
+<p>在学习的过程，我也做了不少实验，犯了不少错，积累了一些经验，对SaltStack的运行也有一定了解，如果有什么问题，或是不太理解的地方，非常欢迎留言交流！</p>
+<h2>Salt States</h2>
+<p>参考链接：<a href="http://docs.saltstack.com/topics/tutorials/starting_states.html">官方文档</a></p>
+<p>简洁，简洁，简洁</p>
+<p>众多强大而有力的设计都建立在简单的原则之上。Salt SLS系统也努力向K.I.S.S看齐。（Keep It Stupidly Simple）</p>
+<p>SLS（代表SaLt State文件）是Salt State系统的核心。SLS描述了系统的目标状态，由格式简单的数据构成。这经常被称作配置管理。</p>
+<div class="highlight"><pre><span></span>Note
+
+这篇文章从整体上介绍了Salt States，以后还会增加对各组件的深入介绍。
+</pre></div>
+
+
+<h2>只是数据而已</h2>
+<p>深入学习之前，明白SLS文件只是结构化的数据而已是很有用的。看懂和编写SLS文件不需要理解这一点，但会让你体会到SLS系统的强大。</p>
+<p>SLS文件本质上只是一些@dictionaries@，@lists@，@strings@和@numbers@。这种设计让SLS文件非常灵活，可以满足开发者的各种需求，而且可读性很高。写得越多，就越清楚到底写得是什么。</p>
+<h2>默认的数据 - YAML</h2>
+<p>Salt默认使用能找到的最简单的序列化数据格式 — — YAML，来表达SLS数据。典型的SLS文件如下：</p>
+<div class="highlight"><pre><span></span><span class="n">apache</span><span class="o">:</span>
+   <span class="n">pkg</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">installed</span>
+   <span class="n">service</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">running</span>
+     <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+       <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">apache</span>
+</pre></div>
+
+
+<p>这些数据确保名为@apache@的软件包处于已安装状态（如果不是，那么就安装@apache@），服务进程@apache@处于运行状态。这些数据简洁，易于理解。下面简单解释一下：
+ 第1行是这段数据的ID，被称作ID声明。这个ID是将要执行的这些命令的名字。
+ 第2行和第4行表示State声明开始，使用了pkg和service这两个states。pkg使用系统本地的软件包管理器管理将要安装的软件，service管理系统守护进程。
+ 第3行和第5行是要执行的function。这些function定义了名字为ID的软件包和服务的目标状态。此例中，软件包应当处于已安装状态，服务必须运行。
+ 最后，第6行是关键字require。这被称为必要语句（Requisite），它确保了apache服务只有在成功安装软件包后才会启动。</p>
+<h2>添加配置文件和用户</h2>
+<p>部署像apache这样的web服务器时，还需要添加其他的内容。需要管理apache的配置文件，需要添加运行apache服务的用户和组。</p>
+<div class="highlight"><pre><span></span><span class="n">apache</span><span class="o">:</span>
+   <span class="n">pkg</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">installed</span>
+   <span class="n">service</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">running</span>
+     <span class="o">-</span> <span class="n">watch</span><span class="o">:</span>
+       <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">apache</span>
+       <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="sr">/etc/httpd/conf/</span><span class="n">httpd</span><span class="o">.</span><span class="na">conf</span>
+       <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">apache</span>
+   <span class="n">user</span><span class="o">.</span><span class="na">present</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">uid</span><span class="o">:</span> <span class="mi">87</span>
+     <span class="o">-</span> <span class="n">gid</span><span class="o">:</span> <span class="mi">87</span>
+     <span class="o">-</span> <span class="n">home</span><span class="o">:</span> <span class="sr">/var/www/</span><span class="n">html</span>
+     <span class="o">-</span> <span class="n">shell</span><span class="o">:</span> <span class="sr">/bin/</span><span class="n">nologin</span>
+     <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+       <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">apache</span>
+   <span class="n">group</span><span class="o">.</span><span class="na">present</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">gid</span><span class="o">:</span> <span class="mi">87</span>
+     <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+       <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">apache</span>
+
+ <span class="sr">/etc/httpd/conf/</span><span class="n">httpd</span><span class="o">.</span><span class="na">conf</span><span class="o">:</span>
+   <span class="n">file</span><span class="o">.</span><span class="na">managed</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">://</span><span class="n">apache</span><span class="o">/</span><span class="n">httpd</span><span class="o">.</span><span class="na">conf</span>
+     <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+     <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+     <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+</pre></div>
+
+
+<p>这个SLS大大扩展了上面的例子，增加了配置、用户、组，还有一个新的必要语句：watch。</p>
+<p>user和group这两个state添加在apache这个ID下，所以增加的user和group名字都是apache。require语句确保了只有在apache这个group存在时才建立user，只有在apache这个package成功安装后才会建立group。</p>
+<p>service中的require语句换成了watch，从需要1个软件包改为监视3个state（分别是pkg、file和user）。watch语句和require很相似，都能保证被监视或需要的state在自己之前执行，但是watch还有其他作用。在被监视的state发生变化时，定义watch语句的state会执行自己的watcher函数。也就是说，更新软件包，修改配置文件，修改apache用户的uid都会触发service state的watcher函数。在这个例子中，service state的watcher会重启apache服务。</p>
+<div class="highlight"><pre><span></span>Note
+
+Salt的watcher概念非常有意思。Puppet中功能类似的是notify，也可以触发服务重启。Salt的watcher非常灵活，watcher本质上是在state的代码中定义的名为mod_watch()的函数，
+在这个函数中想做什么事情完全就看你的需求了。我没有仔细看Puppet的notify如何实现，不知道是否有这么灵活。
+</pre></div>
+
+
+<h2>多个SLS文件</h2>
+<p>在更有扩展性的部署Salt State时，需要用到不只一个SLS。上面的例子中只使用1个SLS文件，2个或多个SLS文件可以结合形成State Tree。上面的例子还使用了一个奇怪的文件来源 — <code>salt://apache/httpd.conf</code>，这个文件究竟在什么位置呢？</p>
+<p>SLS文件以一定的目录结构分布在master上；SLS和要下发到minion上的文件都只是普通文件。</p>
+<p>上面的例子中的文件在Salt的根目录（见<a href="http://www.ituring.com.cn/article/41632">SaltStack中的文件服务器</a>）分布如下：</p>
+<div class="highlight"><pre><span></span>apache/init.sls
+apache/httpd.conf
+</pre></div>
+
+
+<p>httpd.conf只是apache目录下的一个普通文件，可以直接引用。 使用多个SLS文件可以更加灵活方便，以SSH为例：</p>
+<p>ssh/init.sls:</p>
+<div class="highlight"><pre><span></span>openssh-client:
+   pkg.installed
+
+ /etc/ssh/ssh_config:
+   file.managed:
+     - user: root
+     - group: root
+     - mode: 644
+     - source: salt://ssh/ssh_config
+     - require:
+       - pkg: openssh-client
+</pre></div>
+
+
+<p>ssh/server.sls:</p>
+<div class="highlight"><pre><span></span>include:
+   - ssh
+
+ openssh-server:
+   pkg.installed
+
+ sshd:
+   service.running:
+     - require:
+       - pkg: openssh-client
+       - pkg: openssh-server
+       - file: /etc/ssh/banner
+       - file: /etc/ssh/sshd_config
+
+ /etc/ssh/sshd_config:
+   file.managed:
+     - user: root
+     - group: root
+     - mode: 644
+     - source: salt://ssh/sshd_config
+     - require:
+       - pkg: openssh-server
+
+ /etc/ssh/banner:
+   file:
+     - managed
+     - user: root
+     - group: root
+     - mode: 644
+     - source: salt://ssh/banner
+     - require:
+       - pkg: openssh-server
+
+Note
+
+在ssh/server.sls中，用了两种不同的方式来表示用Salt管理一个文件。在ID为/etc/ssh/sshd_config段中，直接使用file.managed作为state声明，
+而在ID为/etc/ssh/banner段中，使用file作为state声明，附加一个managed属性。两种表示方法的含义与结果完全一样，只是写法不同。
+</pre></div>
+
+
+<p>现在State Tree如下（有些被引用的文件没有给出内容，不影响理解）：</p>
+<div class="highlight"><pre><span></span>apache/init.sls
+apache/httpd.conf
+ssh/init.sls
+ssh/server.sls
+ssh/banner
+ssh/ssh_config
+ssh/sshd_config
+</pre></div>
+
+
+<p>ssh/server.sls中使用了include语句。include将别的SLS添加到当前文件中，所以可以require或watch被引用的SLS中定义的内容，还可以extend其内容（马上讲到）。include语句使得state可以跨文件引用。使用include相当于把被引用的内容文件添加到自身。</p>
+<h2>扩展被引用的SLS数据 Extend</h2>
+<p>扩展是什么意思呢？比如在ssh/server.sls中定义了一个apache通用的服务器，现在要增加一个带mod_python模块的apache，不需要重头写新的SLS，直接include原来的server.sls，然后增加安装mode_python的state，再在apache service的watch列表中增加mod_python即可。python/mod_python.sls内容如下：</p>
+<div class="highlight"><pre><span></span> include:
+   - apache
+
+ extend:
+   apache:
+     service:
+       - watch:
+         - pkg: mod_python
+
+ mod_python:
+   pkg.installed
+</pre></div>
+
+
+<p>这个例子中，先将apache目录下的init.sls文件包含进来（在include一个目录时，Salt会自动查找init.sls文件），然后扩展了ID为apache下的service state中的watch列表。</p>
+<p>也可以在Extending中修改文件的下载位置。ssh/custom-server.sls:</p>
+<div class="highlight"><pre><span></span>include:
+   - ssh.server
+
+ extend:
+   /etc/ssh/banner:
+     file:
+       - source: salt://ssh/custom-banner
+</pre></div>
+
+
+<p>Extend使得Salt的SLS更加灵活。为什么SLS能够做Extend呢？文章一开始最强调了，SLS中的文件仅仅是结构化的data而已，在处理SLS时，会将其中的内容解析成Python中的dict（当然这个dict中会嵌套dict和list）。修改apache watch的内容，相当于往list里面添加一个元素；修改banner文件的下载路径相当于修改dict中的某个key对应的值。在extending时，会附加加require/watch的内容，而不是覆盖。</p>
+<h2>理解渲染系统 Render System</h2>
+<p>因为SLS仅仅是data，所以不是非得用YAML来表达。Salt默认使用YAML，只是因为易学易用。只要有对应的renderer，SLS文件可以用任何方式表达（Salt关心的是最终解析出来的数据结构，只要你的renderer能够按要求返回这个数据结构，Salt干嘛关心你如何书写源文件呢？）。</p>
+<p>Salt默认使用yaml_jinja渲染器。yaml_jinjia先用jinja2模板引擎处理SLS，然后再调用YAML解析器。这种设计的好处是，可以在SLS文件使用所有的编程结构（jinja2能怎么用，这里就能怎么用。条件，循环，Python代码，什么都可以）。</p>
+<p>其他可用的渲染器还包括：yaml_mako，使用Mako模板引擎；yaml_wempy，使用Wempy模板引擎；py，直接使用Python写SLS文件；pydsl，建立在Python语法基础上的描述语言。</p>
+<h2>简单介绍默认的渲染器—yaml_jinja</h2>
+<p>关于jinja模板引擎的使用请参考其<a href="http://jinja.pocoo.org/docs">官方文档</a></p>
+<p>在基于模板引擎的渲染器里，可以从3个组件中获取需要的数据：salt，grains和pilla。在模板文件中，可以用salt对象执行任意的Salt function，使用grains访问Grains数据。示例如下：
+ apache/init.sls:</p>
+<div class="highlight"><pre><span></span><span class="n">apache</span><span class="o">:</span>
+   <span class="n">pkg</span><span class="o">.</span><span class="na">installed</span><span class="o">:</span>
+     <span class="o">{%</span> <span class="k">if</span> <span class="n">grains</span><span class="o">[</span><span class="s1">&#39;os&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;RedHat&#39;</span><span class="o">%}</span>
+     <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">httpd</span>
+     <span class="o">{%</span> <span class="n">endif</span> <span class="o">%}</span>
+   <span class="n">service</span><span class="o">.</span><span class="na">running</span><span class="o">:</span>
+     <span class="o">{%</span> <span class="k">if</span> <span class="n">grains</span><span class="o">[</span><span class="s1">&#39;os&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;RedHat&#39;</span><span class="o">%}</span>
+     <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">httpd</span>
+     <span class="o">{%</span> <span class="n">endif</span> <span class="o">%}</span>
+     <span class="o">-</span> <span class="n">watch</span><span class="o">:</span>
+       <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">apache</span>
+       <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="sr">/etc/httpd/conf/</span><span class="n">httpd</span><span class="o">.</span><span class="na">conf</span>
+       <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">apache</span>
+   <span class="n">user</span><span class="o">.</span><span class="na">present</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">uid</span><span class="o">:</span> <span class="mi">87</span>
+     <span class="o">-</span> <span class="n">gid</span><span class="o">:</span> <span class="mi">87</span>
+     <span class="o">-</span> <span class="n">home</span><span class="o">:</span> <span class="sr">/var/www/</span><span class="n">html</span>
+     <span class="o">-</span> <span class="n">shell</span><span class="o">:</span> <span class="sr">/bin/</span><span class="n">nologin</span>
+     <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+       <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">apache</span>
+   <span class="n">group</span><span class="o">.</span><span class="na">present</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">gid</span><span class="o">:</span> <span class="mi">87</span>
+     <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+       <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">apache</span>
+
+ <span class="sr">/etc/httpd/conf/</span><span class="n">httpd</span><span class="o">.</span><span class="na">conf</span><span class="o">:</span>
+   <span class="n">file</span><span class="o">.</span><span class="na">managed</span><span class="o">:</span>
+     <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">://</span><span class="n">apache</span><span class="o">/</span><span class="n">httpd</span><span class="o">.</span><span class="na">conf</span>
+     <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+     <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+     <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+</pre></div>
+
+
+<p>这个例子很容易理解，用到了jinja中的条件结构，如果grains中的os表明minion的操作系统是Red Hat，那么Apache的软件包名和服务名应当是httpd。</p>
+<p>再来一个更NB的例子，用到了jinja的循环结构，在设置MooseFs分布式chunkserver的模块中：
+ moosefs/chunk.sls:</p>
+<div class="highlight"><pre><span></span><span class="x">include:</span>
+<span class="x">   - moosefs</span>
+
+<span class="x"> </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">mnt</span> <span class="k">in</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;cmd.run&#39;</span><span class="o">](</span><span class="s1">&#39;ls /dev/data/moose*&#39;</span><span class="o">)</span><span class="nv">.split</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x"> /mnt/moose</span><span class="cp">{{</span> <span class="nv">mnt</span><span class="o">[-</span><span class="m">1</span><span class="o">]</span> <span class="cp">}}</span><span class="x">:</span>
+<span class="x">   mount.mounted:</span>
+<span class="x">     - device: </span><span class="cp">{{</span> <span class="nv">mnt</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">     - fstype: xfs</span>
+<span class="x">     - mkmnt: True</span>
+<span class="x">   file.directory:</span>
+<span class="x">     - user: mfs</span>
+<span class="x">     - group: mfs</span>
+<span class="x">     - require:</span>
+<span class="x">       - user: mfs</span>
+<span class="x">       - group: mfs</span>
+<span class="x"> </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="x"> &#39;/etc/mfshdd.cfg&#39;:</span>
+<span class="x">   file.managed:</span>
+<span class="x">     - source: salt://moosefs/mfshdd.cfg</span>
+<span class="x">     - user: root</span>
+<span class="x">     - group: root</span>
+<span class="x">     - mode: 644</span>
+<span class="x">     - template: jinja</span>
+<span class="x">     - require:</span>
+<span class="x">       - pkg: mfs-chunkserver</span>
+
+<span class="x"> &#39;/etc/mfschunkserver.cfg&#39;:</span>
+<span class="x">   file.managed:</span>
+<span class="x">     - source: salt://moosefs/mfschunkserver.cfg</span>
+<span class="x">     - user: root</span>
+<span class="x">     - group: root</span>
+<span class="x">     - mode: 644</span>
+<span class="x">     - template: jinja</span>
+<span class="x">     - require:</span>
+<span class="x">       - pkg: mfs-chunkserver</span>
+
+<span class="x"> mfs-chunkserver:</span>
+<span class="x">   pkg:</span>
+<span class="x">     - installed</span>
+<span class="x"> mfschunkserver:</span>
+<span class="x">   service:</span>
+<span class="x">     - running</span>
+<span class="x">     - require:</span>
+<span class="x"> </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">mnt</span> <span class="k">in</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;cmd.run&#39;</span><span class="o">](</span><span class="s1">&#39;ls /dev/data/moose*&#39;</span><span class="o">)</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">       - mount: /mnt/moose</span><span class="cp">{{</span> <span class="nv">mnt</span><span class="o">[-</span><span class="m">1</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">       - file: /mnt/moose</span><span class="cp">{{</span> <span class="nv">mnt</span><span class="o">[-</span><span class="m">1</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x"> </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">       - file: /etc/mfschunkserver.cfg</span>
+<span class="x">       - file: /etc/mfshdd.cfg</span>
+<span class="x">       - file: /var/lib/mfs</span>
+</pre></div>
+
+
+<p>这个例子展示了jinja的强大，多个for循环用来动态地检测并挂载磁盘，多次使用salt对象（这里使用了cmd.run这个执行模块）执行shell命令来收集数据。</p>
+<h2>简单介绍Python和PyDSL渲染器</h2>
+<p>在任务逻辑非常复杂时，默认的yaml_jinja渲染器不一定满足要求，这时可以使用Python渲染器。如何在State tree中添加使用py渲染器的SLS文件呢？简单。 一个非常简单的基本Python SLS文件： python/django.sls:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+     <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     Install the django package</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;include&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;python&#39;</span><span class="p">],</span>
+             <span class="s1">&#39;django&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;pkg&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;installed&#39;</span><span class="p">]}}</span>
+</pre></div>
+</td></tr></table>
+
+<p>这个例子也很好理解，第1行告诉Salt不使用默认的渲染器，而是用py。接着定义了函数run，这个函数的返回值必须符合Salt的要求，即HighState数据结构（我接下来就写关于HighState的文章，现在不必关心其细节，反正就是一个dict，key和value都有规定好的含义）。 如果换用pydsl渲染器，上面的例子会更简洁：
+ python/django.sls:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span></span>include(&#39;python&#39;, delayed=True)
+state(&#39;django&#39;).pkg.installed()
+</pre></div>
+</td></tr></table>
+
+<p>如果用YAML，会是下面这个样子：</p>
+<div class="highlight"><pre><span></span>include:
+  - python
+
+django:
+  pkg.installed
+</pre></div>
+
+
+<p>这也可以看出，正常情况下使用YAML是非常合适的，但如果有需要时，使用纯粹的Python SLS可以非常NB。</p>
+<h2>运行和调试Salt States</h2>
+<p>写好的SLS如何才能应用到minion呢？在SaltStack中，远程执行是一切的基础。执行命令@salt ‘*’ state.highstate@会让所有的minion到master上来取走自己的SLS定义，然后在本地调用对应的state module（user，pkg，service等）来达到SLS描述的状态。如果这条命令只返回minion的主机名加一个’:’，多半是哪一个SLS文件有错。如果minion是以服务进程启动，执行命令@salt-call state.highstate -l debug@可以看到错误信息，便于调试。minion还可以直接在前台以debug模式运行：@salt-minion -l debug@。</p>
+<h2>接下来是什么？</h2>
+<p>接下来是关于Pillar的内容，官方文档<a href="http://docs.saltstack.com/topics/tutorials/pillar.html">在此</a></p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/ru-men.html">入门</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "Salt States概览",
+  "headline": "Salt States概览",
+  "datePublished": "2014-03-16 18:18:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "cssug",
+    "url": "http://www.saltstack.cn/author/cssug.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/starting-states/",
+  "description": "yinchuan分享的Salt States概览"
+}
+</script></body>
+</html>

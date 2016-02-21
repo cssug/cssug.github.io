@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="cssug" />
+<meta name="description" content="clavinli同学分享的salt-ssh安装配置文章" />
+<meta name="keywords" content="SaltStack, 入门">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="Salt-ssh安装配置"/>
+<meta property="og:description" content="clavinli同学分享的salt-ssh安装配置文章"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/salt-ssh-install-and-config/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-03-16 18:30:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/cssug.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="入门"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; Salt-ssh安装配置</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="salt-ssh-install-and-config">Salt-ssh安装配置</h1>
+    <p>Posted on 2014-03-16 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul>
+<li>原文出处: <a href="http://clavinli.github.io/2013/10/22/saltstack-salt-ssh/">http://clavinli.github.io/2013/10/22/saltstack-salt-ssh/</a></li>
+<li>作者: clavinli</li>
+</ul>
+<h2>salt-ssh介绍</h2>
+<p>salt-ssh 是 0.17.0 新出现的一个功能，一听这名字就知道它是依赖 ssh
+来进行远程命令执行的工具，好处就是你不需要在客户端安装
+minion，也不需要安装 master（直接安装 salt-ssh 这个包即可），有点类似
+paramiko、pssh、ansible 这类的工具，有些时候你还真的需要
+salt-ssh（例如：条件不允许安装 minion、不用长期管理某台 minion）
+最最重要的是 salt-ssh 并不只是单纯的 ssh 工具，它支持 salt
+大部分的功能，如 grains、modules、state 等</p>
+<p><strong>备注</strong> 需要注意的是，salt-ssh 并没有继承原来的通讯架构
+(ZeroMQ)，也就是说它的执行速度啥的都会比较慢</p>
+<h2>salt-ssh安装</h2>
+<p>去 github 下载 salt 的源安装即可</p>
+<div class="highlight"><pre><span></span># git clone https://github.com/saltstack/salt.git
+# python setup.py install
+</pre></div>
+
+
+<h2>salt-ssh使用</h2>
+<p>salt-ssh 是通过调用 roster 配置文件来实现的，语法很简答，定义
+ID、host、user、password 即可</p>
+<h3>1、定义 roster，让 salt-ssh 生效</h3>
+<p>默认是在 /etc/salt/roster</p>
+<div class="highlight"><pre><span></span># vim /etc/salt/roster
+squid1:
+  host: 10.14.36.14
+  user: root
+  passwd: 123456
+  port: 36000
+  timeout: 3
+</pre></div>
+
+
+<p>设置完之后就可以进行测试了，语法跟 salt 的一样</p>
+<div class="highlight"><pre><span></span># salt-ssh &#39;squid1&#39; test.ping
+squid1:
+    True
+</pre></div>
+
+
+<h3>2、salt-ssh 不但支持运行 shell 命令，同时它还支持 salt 本身的模块，甚至支持调用 state</h3>
+<p>执行 shell 命令</p>
+<div class="highlight"><pre><span></span># salt-ssh &#39;squid1&#39; -r &#39;df -h&#39;
+squid1:
+    Filesystem            Size  Used Avail Use% Mounted on
+    /dev/sda1             9.9G  1.6G  7.9G  17% /
+    udev                  3.9G  200K  3.9G   1% /dev
+    /dev/sda3              20G  426M   19G   3% /usr/local
+
+# salt-ssh &#39;squid1&#39; -r &#39;cat /etc/SuSE-release&#39;
+squid1:
+    SUSE Linux Enterprise Server 10 (x86_64)
+    VERSION = 10
+    PATCHLEVEL = 1
+</pre></div>
+
+
+<p>调用 salt 本身的模块</p>
+<div class="highlight"><pre><span></span># salt-ssh &#39;squid1&#39; disk.usage
+    /usr/local:
+        ----------
+        1K-blocks:
+            20641788
+        available:
+            19157644
+        capacity:
+            3%
+        filesystem:
+            /dev/sda3
+        used:
+            435504
+    ...
+</pre></div>
+
+
+<p>获取 grains 信息</p>
+<div class="highlight"><pre><span></span># salt-ssh &#39;squid1&#39; grains.item cpu_model
+squid1:
+    ----------
+    cpu_model:
+        Intel(R) Xeon(R) CPU           X3440  @ 2.53GHz
+</pre></div>
+
+
+<p>调用 state 目前 0.17.1 的版本还有 bug，导致 state 调用失败，感谢 Puluto
+修复了此 bug，废话少说，马上试试，<a href="https://github.com/saltstack/salt/issues/7991">issue
+7991</a></p>
+<div class="highlight"><pre><span></span># cat temp.sls
+conf_squidinit:
+  file.managed:
+    - name: /tmp/squid
+    - source: salt://proxy/squid/templates/squid.init
+    - user: root
+    - group: root
+    - mode: 755
+
+# salt-ssh &#39;squid1&#39; state.sls temp
+squid1:
+    ----------
+    file_|-conf_squidinit_|-/tmp/squid_|-managed:
+    ----------
+    __run_num__:
+        0
+    changes:
+        ----------
+        diff:
+            New file
+        mode:
+            755
+    comment:
+        File /tmp/squid updated
+    name:
+        /tmp/squid
+    result:
+    True
+</pre></div>
+
+
+<h2>salt-ssh 实战</h2>
+<p>任务就是使用 salt-ssh 安装 minion 并重启，真正实现自动化 ^^</p>
+<div class="highlight"><pre><span></span># cat salt_install.sls
+epel_install:
+  file.managed:
+    - name: /root/epel-release-6-8.noarch.rpm
+    - source: salt://tutorial/epel-release-6-8.noarch.rpm
+    - user: root
+    - group: root
+  cmd.run:
+    - name: rpm -ivh /root/epel-release-6-8.noarch.rpm
+    - unless: test -f /etc/yum.repos.d/epel.repo
+    - require:
+      - file: epel_install
+
+conf_epel:
+  file.managed:
+    - name: /etc/yum.repos.d/epel.repo
+    - source: salt://tutorial/epel.repo
+    - user: root
+    - group: root
+    - mode: 644
+
+salt_install:
+  pkg.installed:
+    - name: salt-minion
+  file.managed:
+    - name: /etc/salt/minion
+    - source: salt://tutorial/minion
+  service.running:
+    - name: salt-minion
+    - enable: True
+    - reload: True
+    - watch:
+      - file: salt_install
+
+# salt-ssh &#39;squid1&#39; state.sls system.states.salt_install
+...
+
+# salt-ssh &#39;squid1&#39; -r &#39;/etc/init.d/salt-minion restart&#39;
+squid1:
+    Stopping salt-minion daemon: ..done
+    Starting salt-minion daemon: ..done
+</pre></div>
+
+
+<h2>使用 salt-ssh 注意事项</h2>
+<p>salt-ssh 用的是 sshpass 进行密码交互的，所以必须安装 sshpass，salt-ssh
+才能正常运行</p>
+<div class="highlight"><pre><span></span># rpm -qa | grep sshpass
+sshpass-1.05-1.el6.x86_64
+</pre></div>
+
+
+<p>salt-ssh
+使用的范围还是比较广的，适合用于那些已经部署了其他自动化运维工具的机器，如
+puppet、chef，不过我主要用于初始化 minion 环境，主要还是用 salt 比较多</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/ru-men.html">入门</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "Salt-ssh安装配置",
+  "headline": "Salt-ssh安装配置",
+  "datePublished": "2014-03-16 18:30:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "cssug",
+    "url": "http://www.saltstack.cn/author/cssug.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/salt-ssh-install-and-config/",
+  "description": "clavinli同学分享的salt-ssh安装配置文章"
+}
+</script></body>
+</html>

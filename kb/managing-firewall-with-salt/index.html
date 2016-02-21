@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="pengyao" />
+<meta name="description" content="Salt 2014.7支持pillar merge功能, 尝试基于此完成统一的iptables防火墙规则的管理" />
+<meta name="keywords" content="SaltStack, 进阶">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="基于Salt管理iptables防火墙规则"/>
+<meta property="og:description" content="Salt 2014.7支持pillar merge功能, 尝试基于此完成统一的iptables防火墙规则的管理"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/managing-firewall-with-salt/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-12-17 00:00:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/pengyao.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="进阶"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; 基于Salt管理iptables防火墙规则</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="managing-firewall-with-salt">基于Salt管理iptables防火墙规则</h1>
+    <p>Posted on 2014-12-17 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul class="simple">
+<li>原文出处: <a class="reference external" href="http://pengyao.org/managing-firewall-with-salt.html">http://pengyao.org/managing-firewall-with-salt.html</a></li>
+<li>作者: <a class="reference external" href="http://pengyao.org/">pengyao</a></li>
+</ul>
+<p>Salt 2014.7支持pillar merge功能, 尝试基于该功能, 进行统一的iptables防火墙的管理. 本文采用在iptables INPUT链中增加防火墙规则
+(各个服务对应自己的自定义链),同时如果规则中有allow, 则表示该防火墙规则为白名单机制(只允许allow对应的主机访问, 其余均拒绝),
+如果没有allow, 则判断是否存在deny, 如果存在, 则执行黑名单机制(只拒绝deny对应的主机, 其余均允许)</p>
+<div class="section" id="id1">
+<h2>环境说明</h2>
+<ul class="simple">
+<li>OS: CentOS 6.5</li>
+<li>Salt架构: Master/Minions架构, 版本为2014.7.0</li>
+</ul>
+<p>由于2014.7.0中iptables模块存在匹配Bug, 导致会不断进行重复配置, 当前develop分支已经修复这一问题(为修复这个问题的思路点赞), 需要进行对Minion进行如下操作:</p>
+<div class="highlight"><pre><span></span><span class="c1"># 更新已修复匹配Bug的最新iptables模块</span>
+curl -so /usr/lib/python2.6/site-packages/salt/modules/iptables.py <span class="se">\</span>
+https://raw.githubusercontent.com/saltstack/salt/develop/salt/modules/iptables.py
+<span class="c1"># 重启salt-minion</span>
+service salt-minion restart
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h2>开工</h2>
+<div class="section" id="pillar">
+<h3>Pillar</h3>
+<p>/srv/pillar/sshd/init.sls:</p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">firewall</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">sshd_firewall</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">22</span>
+    <span class="l l-Scalar l-Scalar-Plain">deny</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">192.168.0.0/24</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">8.8.8.8</span>
+</pre></div>
+<p>/srv/pillar/httpd/init.sls:</p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">firewall</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">httpd_firewall</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">80</span>
+    <span class="l l-Scalar l-Scalar-Plain">allow</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">127.0.0.1</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">192.168.0.0/24</span>
+</pre></div>
+<p>/srv/pillar/top.sls</p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">sshd</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+</pre></div>
+<p>获取pillar信息:</p>
+<div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> pillar.item firewall --output<span class="o">=</span>yaml
+</pre></div>
+<p>结果如下:</p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">minion-01.example.com</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">firewall</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">httpd_firewall</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">allow</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">127.0.0.1</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">192.168.0.0/24</span>
+      <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">80</span>
+    <span class="l l-Scalar l-Scalar-Plain">sshd_firewall</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">deny</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">192.168.0.0/24</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">8.8.8.8</span>
+      <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">22</span>
+</pre></div>
+</div>
+<div class="section" id="state">
+<h3>State</h3>
+<p>/srv/salt/iptables/init.sls:</p>
+<pre class="literal-block">
+{% for eachfw, fw_rule in pillar['firewall'].iteritems() %}
+# Add custom chain
+{{ eachfw }}-chain:
+  iptables.chain_present:
+    - save: True
+
+# Custom chain rules
+{% if 'allow' in fw_rule %}
+# White Lists
+{% for each_allow in fw_rule['allow'] %}
+{{ eachfw }}_allow_{{ each_allow }}:
+  iptables.insert:
+    - table: filter
+    - chain: {{ eachfw }}-chain
+    - position: 1
+    - source: {{ each_allow }}
+    - jump: ACCEPT
+    - require:
+      - iptables: {{ eachfw }}-chain
+    - require_in:
+      - iptables: {{ eachfw }}_deny
+    - save: True
+{% endfor %}
+# Deny all
+{{ eachfw }}_deny:
+  iptables.append:
+    - table: filter
+    - chain: {{ eachfw }}-chain
+    - jump: DROP
+    - save: True
+
+{% elif 'deny' in fw_rule %}
+# Black Lists
+{% for each_deny in fw_rule['deny'] %}
+{{ eachfw }}_deny_{{ each_deny }}:
+  iptables.insert:
+    - table: filter
+    - chain: {{ eachfw }}-chain
+    - position: 1
+    - source: {{ each_deny }}
+    - jump: DROP
+    - require:
+      - iptables: {{ eachfw }}-chain
+    - require_in:
+      - iptables: {{ eachfw }}_allow
+    - save: True
+{% endfor %}
+# Accept all
+{{ eachfw }}_allow:
+  iptables.append:
+    - table: filter
+    - chain: {{ eachfw }}-chain
+    - jump: ACCEPT
+    - save: True
+{% endif %}
+
+# Export traffic to custom chain
+{{ eachfw }}-main:
+  iptables.insert:
+    - table: filter
+    - chain: INPUT
+    - position: 1
+    - proto: tcp
+    - dport: {{ fw_rule['port'] }}
+    - jump: {{ eachfw }}-chain
+{% endfor %}
+</pre>
+<p>应用iptables配置管理:</p>
+<div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.sls iptables
+</pre></div>
+<p>结果输出如下:</p>
+<pre class="literal-block">
+minion-01.example.com:
+----------
+          ID: sshd_firewall-chain
+    Function: iptables.chain_present
+      Result: True
+     Comment: iptables sshd_firewall-chain chain is already exist in filter table for ipv4
+     Started: 07:58:23.325688
+    Duration: 6.976 ms
+     Changes:
+----------
+          ID: sshd_firewall_deny_192.168.0.0/24
+    Function: iptables.insert
+      Result: True
+     Comment: iptables rule for sshd_firewall_deny_192.168.0.0/24 already set for ipv4 (--source 192.168.0.0/24 --jump DROP)
+              Saved iptables rule for sshd_firewall_deny_192.168.0.0/24 to: --source 192.168.0.0/24 --jump DROP for ipv4
+     Started: 07:58:23.333635
+    Duration: 46.198 ms
+     Changes:
+----------
+          ID: sshd_firewall_deny_8.8.8.8
+    Function: iptables.insert
+      Result: True
+     Comment: iptables rule for sshd_firewall_deny_8.8.8.8 already set for ipv4 (--source 8.8.8.8 --jump DROP)
+              Saved iptables rule for sshd_firewall_deny_8.8.8.8 to: --source 8.8.8.8 --jump DROP for ipv4
+     Started: 07:58:23.380231
+    Duration: 47.926 ms
+     Changes:
+----------
+          ID: sshd_firewall_allow
+    Function: iptables.append
+      Result: True
+     Comment: iptables rule for sshd_firewall_allow already set (/sbin/iptables -t filter -A sshd_firewall-chain  --jump ACCEPT) for ipv4
+              Saved iptables rule for sshd_firewall_allow to: /sbin/iptables -t filter -A sshd_firewall-chain  --jump ACCEPT for ipv4
+     Started: 07:58:23.430386
+    Duration: 50.731 ms
+     Changes:
+----------
+          ID: sshd_firewall-main
+    Function: iptables.insert
+      Result: True
+     Comment: iptables rule for sshd_firewall-main already set for ipv4 (-p tcp --dport 22 --jump sshd_firewall-chain)
+     Started: 07:58:23.481324
+    Duration: 38.941 ms
+     Changes:
+----------
+          ID: httpd_firewall-chain
+    Function: iptables.chain_present
+      Result: True
+     Comment: iptables httpd_firewall-chain chain is already exist in filter table for ipv4
+     Started: 07:58:23.520640
+    Duration: 9.483 ms
+     Changes:
+----------
+          ID: httpd_firewall_allow_127.0.0.1
+    Function: iptables.insert
+      Result: True
+     Comment: iptables rule for httpd_firewall_allow_127.0.0.1 already set for ipv4 (--source 127.0.0.1 --jump ACCEPT)
+              Saved iptables rule for httpd_firewall_allow_127.0.0.1 to: --source 127.0.0.1 --jump ACCEPT for ipv4
+     Started: 07:58:23.530949
+    Duration: 48.088 ms
+     Changes:
+----------
+          ID: httpd_firewall_allow_192.168.0.0/24
+    Function: iptables.insert
+      Result: True
+     Comment: iptables rule for httpd_firewall_allow_192.168.0.0/24 already set for ipv4 (--source 192.168.0.0/24 --jump ACCEPT)
+              Saved iptables rule for httpd_firewall_allow_192.168.0.0/24 to: --source 192.168.0.0/24 --jump ACCEPT for ipv4
+     Started: 07:58:23.579515
+    Duration: 50.945 ms
+     Changes:
+----------
+          ID: httpd_firewall_deny
+    Function: iptables.append
+      Result: True
+     Comment: iptables rule for httpd_firewall_deny already set (/sbin/iptables -t filter -A httpd_firewall-chain  --jump DROP) for ipv4
+              Saved iptables rule for httpd_firewall_deny to: /sbin/iptables -t filter -A httpd_firewall-chain  --jump DROP for ipv4
+     Started: 07:58:23.631684
+    Duration: 50.886 ms
+     Changes:
+----------
+          ID: httpd_firewall-main
+    Function: iptables.insert
+      Result: True
+     Comment: iptables rule for httpd_firewall-main already set for ipv4 (-p tcp --dport 80 --jump httpd_firewall-chain)
+     Started: 07:58:23.682788
+    Duration: 44.153 ms
+     Changes:
+
+Summary
+-------------
+Succeeded: 10
+Failed:     0
+-------------
+Total states run:     10
+</pre>
+<p>检查minion端iptables规则</p>
+<div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> cmd.run <span class="s1">&#39;iptables-save&#39;</span>
+</pre></div>
+<p>结果:</p>
+<pre class="literal-block">
+minion-01.example.com:
+    # Generated by iptables-save v1.4.7 on Wed Dec 17 08:01:51 2014
+    *filter
+    :INPUT ACCEPT [65:13902]
+    :FORWARD ACCEPT [0:0]
+    :OUTPUT ACCEPT [79:24034]
+    :httpd_firewall-chain - [0:0]
+    :sshd_firewall-chain - [0:0]
+    -A INPUT -p tcp -m tcp --dport 80 -j httpd_firewall-chain
+    -A INPUT -p tcp -m tcp --dport 22 -j sshd_firewall-chain
+    -A httpd_firewall-chain -s 192.168.0.0/24 -j ACCEPT
+    -A httpd_firewall-chain -s 127.0.0.1/32 -j ACCEPT
+    -A httpd_firewall-chain -j DROP
+    -A sshd_firewall-chain -s 8.8.8.8/32 -j DROP
+    -A sshd_firewall-chain -s 192.168.0.0/24 -j DROP
+    -A sshd_firewall-chain -j ACCEPT
+    COMMIT
+    # Completed on Wed Dec 17 08:01:51 2014
+</pre>
+<p>达到预期</p>
+</div>
+</div>
+
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/jin-jie.html">进阶</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "基于Salt管理iptables防火墙规则",
+  "headline": "基于Salt管理iptables防火墙规则",
+  "datePublished": "2014-12-17 00:00:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "pengyao",
+    "url": "http://www.saltstack.cn/author/pengyao.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/managing-firewall-with-salt/",
+  "description": "Salt 2014.7支持pillar merge功能, 尝试基于此完成统一的iptables防火墙规则的管理"
+}
+</script></body>
+</html>

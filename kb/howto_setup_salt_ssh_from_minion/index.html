@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://www.saltstack.cn/theme/stylesheet/font-awesome.min.css">
+
+
+    <link href="http://www.saltstack.cn/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="中国SaltStack用户组 Atom">
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="pengyao" />
+<meta name="description" content="Salt 0.17版本重要的特性是引入了Salt SSH系统，本文基于已有的SaltStack Master/Minions环境,快速构建Salt SSH维护环境, 提供Salt多重维护方式." />
+<meta name="keywords" content="SaltStack, 进阶">
+<meta property="og:site_name" content="中国SaltStack用户组"/>
+<meta property="og:title" content="基于Salt Master/Minions快速构建Salt SSH环境"/>
+<meta property="og:description" content="Salt 0.17版本重要的特性是引入了Salt SSH系统，本文基于已有的SaltStack Master/Minions环境,快速构建Salt SSH维护环境, 提供Salt多重维护方式."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://www.saltstack.cn/kb/howto_setup_salt_ssh_from_minion/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2013-11-08 00:00:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://www.saltstack.cn/author/pengyao.html">
+<meta property="article:section" content="kb"/>
+<meta property="article:tag" content="SaltStack"/>
+<meta property="article:tag" content="进阶"/>
+<meta property="og:image" content="/images/site_logo.png">
+  <title>中国SaltStack用户组 &ndash; 基于Salt Master/Minions快速构建Salt SSH环境</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://www.saltstack.cn">
+        <img src="/images/site_logo.png" alt="中国SaltStack用户组" title="中国SaltStack用户组">
+      </a>
+      <h1 style="font-size:1.4em"><a href="http://www.saltstack.cn">中国SaltStack用户组</a></h1>
+      <p>China SaltStack User Group</p>
+      <nav>
+        <ul class="list">
+          <li><a href="/kb/" target="_blank">知识库</a></li>
+          <li><a href="/saltair/" target="_blank">Salt-Air</a></li>
+          <li><a href="/saltconf/" target="_blank">SaltConf</a></li>
+          <li><a href="/about/" target="_blank">About</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/cssug" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-weibo" href="http://weibo.com/saltstack" target="_blank"><i class="fa fa-weibo"></i></a></li>
+        <li><a class="sc-group" href="https://groups.google.com/forum/#!forum/saltstack-users-cn" target="_blank"><i class="fa fa-group"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="howto_setup_salt_ssh_from_minion">基于Salt Master/Minions快速构建Salt SSH环境</h1>
+    <p>Posted on 2013-11-08 in <a href="http://www.saltstack.cn/kb/">kb</a></p>
+  </header>
+  <div>
+    <ul class="simple">
+<li>原文出处: <a class="reference external" href="http://pengyao.org/howto_setup_salt_ssh_from_minion.html">http://pengyao.org/howto_setup_salt_ssh_from_minion.html</a></li>
+<li>作者: <a class="reference external" href="http://pengyao.org/">pengyao</a></li>
+</ul>
+<p>Salt 0.17版本已发布，该版本中重要的特性是引入了Salt SSH系统，提供了无需Minion、基于SSH的维护方式。原有的Salt维护环境已经初具规模，再手动重新构建Salt SSH环境成本较高。偷懒是人的天性，利用原有SaltStack Master/Minions环境，如何快速构建新的Salt SSH维护环境将是本文的主题.</p>
+<div class="section" id="id1">
+<h2>前置阅读</h2>
+<p>预则立，不预则废。阅读本文前先阅读如下文章:</p>
+<ul class="simple">
+<li>Salt 0.17 Release Note: <a class="reference external" href="http://docs.saltstack.com/topics/releases/0.17.0.html">http://docs.saltstack.com/topics/releases/0.17.0.html</a></li>
+<li>Salt SSH: <a class="reference external" href="http://docs.saltstack.com/topics/ssh/">http://docs.saltstack.com/topics/ssh/</a></li>
+<li>Salt Rosters: <a class="reference external" href="http://docs.saltstack.com/topics/ssh/roster.html">http://docs.saltstack.com/topics/ssh/roster.html</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>环境说明</h2>
+<ul class="simple">
+<li>Minion版本: 本文会采用 <a class="reference external" href="http://docs.saltstack.com/topics/mine/">Salt Mine</a> 获取已有的Minion ID及IP地址，由于Salt Mine为0.15.0引入的新功能，所以需要保证Minion的版本等于或高于0.15.0</li>
+<li>Master的安装采用EPEL仓库yum方式</li>
+<li>所有minion端sshd服务已启动，并允许Master访问</li>
+<li>Master所在服务器上同时安装有Minion并运行Master进行管理, 对应的Minion ID为 <em>salt</em></li>
+<li>Salt file_roots目录为 <em>/srv/salt/</em> , pillar_roots目录为 <em>/srv/pillar/</em></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>开工</h2>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">以下所有操作在Master端进行</p>
+</div>
+<div class="section" id="salt-sshkey">
+<h3>创建用于Salt SSH环境的用户及key认证管理环境</h3>
+<p>生成Master SSH key</p>
+<div class="highlight"><pre><span></span><span class="c1">## 创建master ssh key目录</span>
+mkdir /etc/salt/pki/master/ssh/
+<span class="c1">## 生成Master SSH key</span>
+<span class="nb">cd</span> /etc/salt/pki/master/ssh/
+ssh-keygen -t rsa -P <span class="s2">&quot;&quot;</span> -f salt-ssh.rsa
+<span class="c1">## 复制master public key至 salt fileserver</span>
+cp /etc/salt/pki/master/ssh/salt-ssh.rsa.pub /srv/salt/salt/files/salt-ssh.rsa.pub
+</pre></div>
+<p>编写用于Salt SSH管理的用户及key认证状态管理文件, <em>/srv/salt/salt/ssh/init.sls</em></p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt-user</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">{</span><span class="c1"># salt user #}</span>
+  <span class="nv">user.present</span><span class="p p-Indicator">:</span>
+    <span class="nv">- name</span><span class="p p-Indicator">:</span> <span class="nv">salt</span>
+  <span class="p p-Indicator">{</span><span class="c1"># salt user sudoer #}</span>
+  <span class="nv">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="nv">- name</span><span class="p p-Indicator">:</span> <span class="nv">/etc/sudoers.d/salt</span>
+    <span class="nv">- source</span><span class="p p-Indicator">:</span> <span class="nv">salt</span><span class="p p-Indicator">:</span><span class="nv">//salt/files/etc/sudoers.d/salt</span>
+    <span class="nv">- require</span><span class="p p-Indicator">:</span>
+      <span class="nv">- user</span><span class="p p-Indicator">:</span> <span class="nv">salt-user</span>
+
+<span class="nv">salt-master-key</span><span class="p p-Indicator">:</span>
+  <span class="nv">ssh_auth.present</span><span class="p p-Indicator">:</span>
+    <span class="nv">- user</span><span class="p p-Indicator">:</span> <span class="nv">salt</span>
+    <span class="nv">- source</span><span class="p p-Indicator">:</span> <span class="nv">salt</span><span class="p p-Indicator">:</span><span class="nv">//salt/files/salt-ssh.rsa.pub</span>
+    <span class="nv">- require</span><span class="p p-Indicator">:</span>
+      <span class="nv">- user</span><span class="p p-Indicator">:</span> <span class="nv">salt-user</span>
+</pre></div>
+<p><em>salt</em> 用户对应的sudoer文件 <em>/srv/salt/salt/files/etc/sudoers.d/salt</em>:</p>
+<pre class="literal-block">
+Defaults:salt !requiretty
+salt ALL=(ALL) NOPASSWD: ALL
+</pre>
+<p>应用状态</p>
+<div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.sls salt.ssh
+</pre></div>
+</div>
+<div class="section" id="mine-minion-idip">
+<h3>配置Mine,以获取Minion id及IP地址</h3>
+<p>配置Salt Mine, <em>/srv/pillar/salt/mine.sls</em></p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">mine_functions</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">network.ip_addrs</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">eth0</span>
+</pre></div>
+<p>配置pillar top.sls, <em>/srv/pillar/top.sls</em></p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt.mine</span>
+</pre></div>
+<p>刷新Pillar，并验证Salt Mine配置</p>
+<div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> saltutil.refresh_pillar
+salt <span class="s1">&#39;*&#39;</span> pillar.get mine_functions
+</pre></div>
+<p>更新Salt Mine，并测试获取所有Minions的ID及IP</p>
+<div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> mine.update
+salt <span class="s1">&#39;salt&#39;</span> mine.get <span class="s1">&#39;*&#39;</span> network.ip_addrs
+</pre></div>
+</div>
+<div class="section" id="salt-rosters">
+<h3>生成Salt Rosters</h3>
+<p>配置Salt Rosters state</p>
+<p><em>/srv/salt/salt/ssh/roster.sls</em></p>
+<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt-rosters</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">{</span><span class="c1"># salt rosters file for salt-ssh #}</span>
+  <span class="nv">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="nv">- name</span><span class="p p-Indicator">:</span> <span class="nv">/etc/salt/roster</span>
+    <span class="nv">- source</span><span class="p p-Indicator">:</span> <span class="nv">salt</span><span class="p p-Indicator">:</span><span class="nv">//salt/files/etc/salt/roster</span>
+    <span class="nv">- template</span><span class="p p-Indicator">:</span> <span class="nv">jinja</span>
+</pre></div>
+<p><em>/srv/salt/salt/files/etc/salt/roster</em>:</p>
+<pre class="literal-block">
+{% for eachminion, each_mine in salt['mine.get']('*', 'network.ip_addrs').iteritems() -%}
+{{eachminion}}:
+  host: {{each_mine[0]}}
+  user: salt
+  sudo: True
+{% endfor -%}
+</pre>
+<p>生成Salt Rosters</p>
+<div class="highlight"><pre><span></span>salt <span class="s1">&#39;salt&#39;</span> state.sls salt.ssh.roster
+</pre></div>
+</div>
+<div class="section" id="salt-ssh">
+<h3>应用Salt SSH</h3>
+<p>将Master升级至0.17及以上版本(EPEL Stable当前版本为已经为0.17.1-1), 至此, Salt SSH环境已经构建完毕</p>
+<div class="highlight"><pre><span></span>yum update salt-master
+service salt-master restart
+</pre></div>
+<p>测试Salt SSH</p>
+<div class="highlight"><pre><span></span><span class="c1">## 运行Salt Module</span>
+salt-ssh <span class="s1">&#39;*&#39;</span> test.ping
+<span class="c1">## 运行原始SHELL命令</span>
+salt-ssh <span class="s1">&#39;*&#39;</span> -r <span class="s1">&#39;uptime&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>后话</h2>
+<p>Salt这是要抢 <a class="reference external" href="https://github.com/fabric/fabric">Fabric</a> 饭碗的节奏啊，个人更喜欢Salt Master/Minions这样的管理方式，Salt SSH作为补充，用于升级Minion、重启Minion等等自维护工作还是很靠谱的。有了Salt SSH，再也不用担心是先有鸡还是先有蛋的问题了.</p>
+</div>
+
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://www.saltstack.cn/tag/saltstack.html">SaltStack</a>
+      <a href="http://www.saltstack.cn/tag/jin-jie.html">进阶</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; 中国SaltStack用户组 </p>
+    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "基于Salt Master/Minions快速构建Salt SSH环境",
+  "headline": "基于Salt Master/Minions快速构建Salt SSH环境",
+  "datePublished": "2013-11-08 00:00:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "pengyao",
+    "url": "http://www.saltstack.cn/author/pengyao.html"
+  },
+  "image": "/images/site_logo.png",
+  "url": "http://www.saltstack.cn/kb/howto_setup_salt_ssh_from_minion/",
+  "description": "Salt 0.17版本重要的特性是引入了Salt SSH系统，本文基于已有的SaltStack Master/Minions环境,快速构建Salt SSH维护环境, 提供Salt多重维护方式."
+}
+</script></body>
+</html>
