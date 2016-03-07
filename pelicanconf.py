@@ -23,7 +23,7 @@ AUTHOR_FEED_RSS = None
 
 # Blogroll
 LINKS = (('知识库', '/kb/'),
-         ('中文手册', 'http://docs.saltstack.cn/')
+         ('中文手册', 'http://docs.saltstack.cn/'),
          (u'Salt-Air', '/saltair/'),
          (u'SaltConf', '/saltconf/'),
          (u'About', '/about/'))
